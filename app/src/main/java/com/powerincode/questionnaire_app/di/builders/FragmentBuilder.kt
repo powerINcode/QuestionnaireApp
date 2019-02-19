@@ -1,5 +1,6 @@
 package com.powerincode.questionnaire_app.di.builders
 
+import com.powerincode.questionnaire_app.di.modules.MainModule
 import com.powerincode.questionnaire_app.screens.MainFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -10,6 +11,6 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class FragmentBuilder {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [MainModule::class])
     abstract fun buildMainFragment() : MainFragment
 }

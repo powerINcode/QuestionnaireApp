@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.screens.base
+package com.powerincode.questionnaire_app.screens.base.viewmodel
 
 import android.arch.lifecycle.ViewModel
 

@@ -24,7 +24,7 @@ object AppModule {
     @Suppress("UNCHECKED_CAST")
     @Provides
     @JvmStatic
-    fun provideViewModelFactory(viewModels : Map<Class<out ViewModel>, Provider<ViewModel>>) =
+    fun provideViewModelFactory(viewModels : Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>) =
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass : Class<T>) : T {
                 val viewModelProvider =

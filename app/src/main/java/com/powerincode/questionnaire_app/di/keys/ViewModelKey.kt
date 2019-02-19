@@ -1,6 +1,6 @@
 package com.powerincode.questionnaire_app.di.keys
 
-import com.powerincode.questionnaire_app.screens.base.BaseViewModel
+import android.arch.lifecycle.ViewModel
 import dagger.MapKey
 import kotlin.reflect.KClass
 
@@ -9,5 +9,6 @@ import kotlin.reflect.KClass
  */
 
 @MapKey
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ViewModelKey(val value : KClass<out BaseViewModel>)
+annotation class ViewModelKey(val value : KClass<out ViewModel>)

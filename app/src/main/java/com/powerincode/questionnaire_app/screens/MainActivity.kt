@@ -2,17 +2,14 @@ package com.powerincode.questionnaire_app.screens
 
 import android.os.Bundle
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.screens.base.BaseNavigationActivity
-import javax.inject.Inject
+import com.powerincode.questionnaire_app.screens.base.activity.BaseNavigationActivity
 
 class MainActivity : BaseNavigationActivity() {
-    @Inject
-    lateinit var viewModel : MainViewModel
+    override fun getLayoutId() : Int = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-
+        supportActionBar?.title = "Hahaha"
     }
 }
