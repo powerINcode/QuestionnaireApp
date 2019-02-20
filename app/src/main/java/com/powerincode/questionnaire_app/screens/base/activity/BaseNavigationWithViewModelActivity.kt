@@ -9,7 +9,7 @@ import javax.inject.Inject
 /**
  * Created by powerman23rus on 12/02/2019.
  */
-abstract class BaseNavigationWithViewModelActivity<T : BaseViewModel> : BaseNavigationActivity() {
+abstract class BaseNavigationWithViewModelActivity<T : BaseViewModel<Any?>> : BaseNavigationActivity() {
     abstract fun getViewModelClass() : Class<T>
 
     @Inject

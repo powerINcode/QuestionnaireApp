@@ -1,6 +1,5 @@
 package com.powerincode.questionnaire_app.screens
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.screens.base.fragment.BaseFragment
+import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
  * Created by powerman23rus on 12/02/2019.
@@ -21,16 +21,23 @@ class MainFragment : BaseFragment<MainViewModel>() {
 
     override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.onCreated()
+
+        test.animate()
+            .translationX(500f)
+            .setDuration(4000)
+            .start()
     }
 
     override fun onObserveViewModel(vm : MainViewModel) {
         super.onObserveViewModel(vm)
 
-        var i = 1
-        viewModel.getMessage().observe(this, Observer {
-            Toast.makeText(context, "$it: $i", Toast.LENGTH_SHORT).show()
-            i++
-        })
+        viewModel.message.observeEvent {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.loader.observeEvent {
+            pb_loading.visibility = if(it) View.VISIBLE else View.INVISIBLE
+        }
+
     }
 }

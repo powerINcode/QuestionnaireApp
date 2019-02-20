@@ -1,13 +1,12 @@
 package com.powerincode.questionnaire_app.screens.base.activity
 
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.powerincode.questionnaire_app.R
 
 /**
@@ -24,7 +23,8 @@ abstract class BaseNavigationActivity : BaseActivity() {
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
 
-        getToolbarId()?.let { findViewById<Toolbar>(it).setupWithNavController(navController, appBarConfiguration) }
+        setupActionBarWithNavController(navController, appBarConfiguration)
+//        getToolbarId()?.let { findViewById<Toolbar>(it).setupWithNavController(navController, appBarConfiguration) }
     }
 
     override fun onSupportNavigateUp() : Boolean {
