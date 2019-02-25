@@ -1,6 +1,7 @@
 package com.powerincode.questionnaire_app.di.builders
 
 import com.powerincode.questionnaire_app.screens.MainActivity
+import com.powerincode.questionnaire_app.screens.auth.AuthActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -10,6 +11,9 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class ActivityBuilder {
+    @ContributesAndroidInjector
+    abstract fun buildAuthActivity() : AuthActivity
+
     @ContributesAndroidInjector
     abstract fun buildMainActivity() : MainActivity
 }

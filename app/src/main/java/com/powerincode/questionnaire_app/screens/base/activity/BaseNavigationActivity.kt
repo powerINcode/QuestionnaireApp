@@ -23,8 +23,9 @@ abstract class BaseNavigationActivity : BaseActivity() {
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupActionBarWithNavController(navController, appBarConfiguration)
-//        getToolbarId()?.let { findViewById<Toolbar>(it).setupWithNavController(navController, appBarConfiguration) }
+        supportActionBar?.also {
+            setupActionBarWithNavController(navController, appBarConfiguration)
+        }
     }
 
     override fun onSupportNavigateUp() : Boolean {

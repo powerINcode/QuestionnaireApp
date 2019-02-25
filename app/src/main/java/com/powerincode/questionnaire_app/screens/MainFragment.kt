@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
  */
 class MainFragment : BaseFragment<MainViewModel>() {
     override fun getViewModelClass() = MainViewModel::class.java
+    override fun getLayoutId() : Int = R.layout.fragment_main
 
     override fun onCreateView(inflater : LayoutInflater, container : ViewGroup?, savedInstanceState : Bundle?) : View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -21,7 +22,6 @@ class MainFragment : BaseFragment<MainViewModel>() {
 
     override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         test.animate()
             .translationX(500f)
             .setDuration(4000)

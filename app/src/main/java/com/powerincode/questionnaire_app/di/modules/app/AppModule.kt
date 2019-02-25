@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.di.modules
+package com.powerincode.questionnaire_app.di.modules.app
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
@@ -14,7 +14,10 @@ import javax.inject.Singleton
  * Created by powerman23rus on 12/02/2019.
  */
 
-@Module
+@Module(
+    includes = [
+        NetworkModule::class]
+)
 object AppModule {
 
     @JvmStatic

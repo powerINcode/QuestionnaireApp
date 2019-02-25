@@ -3,7 +3,7 @@ package com.powerincode.questionnaire_app.di.components
 import com.powerincode.questionnaire_app.App
 import com.powerincode.questionnaire_app.di.builders.ActivityBuilder
 import com.powerincode.questionnaire_app.di.builders.FragmentBuilder
-import com.powerincode.questionnaire_app.di.modules.AppModule
+import com.powerincode.questionnaire_app.di.modules.app.AppModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule

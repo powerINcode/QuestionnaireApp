@@ -5,6 +5,7 @@ import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import com.powerincode.questionnaire_app.R
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -21,7 +22,7 @@ abstract class BaseActivity : AppCompatActivity(), HasSupportFragmentInjector {
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
 
     @IdRes
-    protected fun getToolbarId() : Int? = R.id.toolbar
+    protected open fun getToolbarId() : Int = R.id.toolbar
     @LayoutRes
     protected abstract fun getLayoutId() : Int
 
@@ -29,7 +30,7 @@ abstract class BaseActivity : AppCompatActivity(), HasSupportFragmentInjector {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
-        getToolbarId()?.let { setSupportActionBar(findViewById(it)) }
+        findViewById<Toolbar>(getToolbarId())?.let { setSupportActionBar(it) }
 
     }
 }

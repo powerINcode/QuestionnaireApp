@@ -6,7 +6,11 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.powerincode.questionnaire_app.core.extensions.observeEvent
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.observers.NotNullObserver
@@ -17,15 +21,21 @@ import javax.inject.Inject
 /**
  * Created by powerman23rus on 12/02/2019.
  */
-abstract class BaseFragment<T : BaseViewModel<Any?>> : Fragment() {
+abstract class BaseFragment<T : BaseViewModel> : Fragment() {
+    @LayoutRes
+    abstract fun getLayoutId() : Int
     abstract fun getViewModelClass() : Class<T>
 
     @Inject
     lateinit var factory : ViewModelProvider.Factory
     lateinit var viewModel : T
 
-    override fun onCreate(savedInstanceState : Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater : LayoutInflater, container : ViewGroup?, savedInstanceState : Bundle?) : View? {
+        return inflater.inflate(getLayoutId(), container, false)
+    }
+
+    override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         activity?.let {
             viewModel = ViewModelProviders.of(it, factory).get(getViewModelClass())

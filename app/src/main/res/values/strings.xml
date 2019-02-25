@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">questionnaire-app</string>
+    <string name="app_name">Questionnaire App</string>
+
+    <string name="login_title">Login</string>
+    <string name="login_first_name_placeholder">First Name</string>
+    <string name="login_last_name_placeholder">Last Name</string>
+    <string name="login_choose_avatar">Choose an Avatar</string>
 </resources>

@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Created by powerman23rus on 12/02/2019.
  */
-abstract class BaseViewModel<T> : ViewModel(), CoroutineScope {
+abstract class BaseViewModel : ViewModel(), CoroutineScope {
     private val job : Job = Job()
     override val coroutineContext : CoroutineContext = Dispatchers.Main + job
 
@@ -31,9 +31,9 @@ abstract class BaseViewModel<T> : ViewModel(), CoroutineScope {
             _loader.event = true
             block()
         } catch (e : Exception) {
+            if(e is CancellationException) throw e
             _message.event = e.toString()
-        }
-        finally {
+        } finally {
             _loader.event = false
         }
     }
