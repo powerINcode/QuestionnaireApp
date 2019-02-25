@@ -19,6 +19,13 @@
         <item name="android:colorBackground">@color/light_grey</item>
     </style>
 
+    <style name="Text" />
+    <style name="Text.Header">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Topeka.CompoundButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:background">@drawable/selector_button</item>
         <item name="android:button">@null</item>

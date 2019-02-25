@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.powerincode.questionnaire_app.core.views.AvatarView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/iv_avatar_view_holder_avatar"
+    android:layout_width="@dimen/login_avatar_size"
+    android:layout_height="@dimen/login_avatar_size"
+    android:layout_gravity="center"
+    tools:src="@drawable/avatar_1_raster" />
