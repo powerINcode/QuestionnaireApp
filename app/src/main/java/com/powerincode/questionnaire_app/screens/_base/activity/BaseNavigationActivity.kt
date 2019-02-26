@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.screens.base.activity
+package com.powerincode.questionnaire_app.screens._base.activity
 
 import android.os.Bundle
 import android.view.MenuItem

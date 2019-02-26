@@ -1,9 +1,9 @@
-package com.powerincode.questionnaire_app.screens.base.activity
+package com.powerincode.questionnaire_app.screens._base.activity
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import com.powerincode.questionnaire_app.screens.base.viewmodel.BaseViewModel
+import com.powerincode.questionnaire_app.screens._base.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 /**

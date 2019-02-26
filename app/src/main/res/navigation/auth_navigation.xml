@@ -10,4 +10,10 @@
         android:name="com.powerincode.questionnaire_app.screens.auth.login.LoginFragment"
         android:label="@string/login_title"
         tools:layout="@layout/fragment_login"/>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.powerincode.questionnaire_app.screens.main.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+
 </navigation>

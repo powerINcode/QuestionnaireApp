@@ -1,12 +1,14 @@
-package com.powerincode.questionnaire_app.screens
+package com.powerincode.questionnaire_app.screens.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.screens.base.fragment.BaseFragment
+import com.powerincode.questionnaire_app.core.common.exhaustive
+import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
@@ -26,6 +28,8 @@ class MainFragment : BaseFragment<MainViewModel>() {
             .translationX(500f)
             .setDuration(4000)
             .start()
+
+        btn_log_out.setOnClickListener { viewModel.signOut() }
     }
 
     override fun onObserveViewModel(vm : MainViewModel) {
@@ -39,5 +43,18 @@ class MainFragment : BaseFragment<MainViewModel>() {
             pb_loading.visibility = if(it) View.VISIBLE else View.INVISIBLE
         }
 
+    }
+
+    override fun observeNavigation(vm : MainViewModel) {
+        super.observeNavigation(vm)
+
+        vm.navigation.observeEvent {
+            when(it) {
+                MainNavigation.NavigateToAuth -> {
+                    findNavController().navigate(R.id.authActivity)
+                    notifyFinishActivity()
+                }
+            }.exhaustive
+        }
     }
 }

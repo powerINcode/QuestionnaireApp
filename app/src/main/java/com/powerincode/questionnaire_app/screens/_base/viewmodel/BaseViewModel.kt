@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.screens.base.viewmodel
+package com.powerincode.questionnaire_app.screens._base.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent

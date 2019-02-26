@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.screens.base.fragment
+package com.powerincode.questionnaire_app.screens._base.fragment
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import com.powerincode.questionnaire_app.core.extensions.observeEvent
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.observers.NotNullObserver
-import com.powerincode.questionnaire_app.screens.base.viewmodel.BaseViewModel
+import com.powerincode.questionnaire_app.screens._base.viewmodel.BaseViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -54,6 +54,8 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     protected open fun onObserveViewModel(vm : T) {
 
     }
+
+    protected fun notifyFinishActivity() = activity?.finish()
 
     protected fun <T2> LiveData<T2>.observe(block : (T2) -> Unit) {
         observe(this@BaseFragment, NotNullObserver {
