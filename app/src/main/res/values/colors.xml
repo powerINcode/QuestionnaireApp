@@ -11,6 +11,9 @@
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
 
+    <color name="rippleColor">#BE4E4D4D</color>
+    <color name="shadeColor">#2C000000</color>
+
     <color name="white">@android:color/white</color>
     <color name="black">@android:color/black</color>
     <color name="transparent">@android:color/transparent</color>

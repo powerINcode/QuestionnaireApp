@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt">
     <item>
-        <shape android:shape="rectangle">
-            <corners android:radius="24dp" />
-            <solid android:color="@color/white" />
-        </shape>
+        <ripple android:color="?rippleColor">
+            <item android:drawable="@drawable/bg_button" />
+        </ripple>
     </item>
 </selector>

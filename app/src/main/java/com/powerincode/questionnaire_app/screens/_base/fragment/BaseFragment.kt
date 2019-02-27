@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.powerincode.questionnaire_app.core.extensions.observeEvent
+import com.powerincode.questionnaire_app.core.extensions.toast
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.observers.NotNullObserver
 import com.powerincode.questionnaire_app.screens._base.activity.BaseActivity
@@ -62,7 +63,11 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
 
     protected open fun observeNavigation(vm : T) {}
 
-    protected open fun onObserveViewModel(vm : T) {}
+    protected open fun onObserveViewModel(vm : T) {
+        vm.message.observeEvent {
+            toast(it)
+        }
+    }
 
     protected fun setTitle(@StringRes resId : Int) = setTitle(getString(resId))
     protected fun setTitle(title : String) : Unit? {
