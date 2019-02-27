@@ -6,6 +6,7 @@ import com.powerincode.questionnaire_app.screens._base.activity.BaseNavigationAc
 
 class MainActivity : BaseNavigationActivity() {
     override fun getLayoutId() : Int = R.layout.activity_main
+    override fun getInitialFragment() = MainFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,6 +1,9 @@
 package com.powerincode.questionnaire_app.di.modules.app
 
 import android.content.Context
+import com.google.android.gms.auth.api.credentials.Credentials
+import com.google.android.gms.auth.api.credentials.CredentialsClient
+import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -19,6 +22,12 @@ class GoogleAuthClientModule {
     @Provides
     fun provideGoogleSignInClient(context : Context, signedOptions : GoogleSignInOptions) : GoogleSignInClient {
         return GoogleSignIn.getClient(context, signedOptions)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCredentialsClient(context : Context) : CredentialsClient {
+        return Credentials.getClient(context, CredentialsOptions.Builder().forceEnableSaveDialog().build())
     }
 
     @Singleton

@@ -1,36 +1,50 @@
 package com.powerincode.questionnaire_app.screens._base.activity
 
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.powerincode.questionnaire_app.R
+import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
 
 /**
  * Created by powerman23rus on 12/02/2019.
  */
 abstract class BaseNavigationActivity : BaseActivity() {
-    open val navController : NavController by lazy { findNavController(R.id.nav_host_fragment) }
-    open val appBarConfiguration : AppBarConfiguration by lazy { buildAppBarConfiguration() }
+    abstract fun getInitialFragment() : BaseFragment<*>
 
-    override fun onOptionsItemSelected(item : MenuItem) : Boolean {
-        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item)
-    }
+    protected var lastPushedFragment : BaseFragment<*>? = null
 
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportActionBar?.also {
-            setupActionBarWithNavController(navController, appBarConfiguration)
+        setFragment(getInitialFragment(), false)
+    }
+
+    override fun onDestroy() {
+        lastPushedFragment = null
+        super.onDestroy()
+    }
+
+    fun pushFragment(fragment : BaseFragment<*>) {
+        setFragment(fragment, true, fragment.fragmentTag())
+    }
+
+    fun addFragment(fragment : BaseFragment<*>) {
+        setFragment(fragment, true, null)
+    }
+
+    protected fun setFragment(
+        fragment : BaseFragment<*>,
+        isAddToBackStack : Boolean,
+        tag : String? = null
+    ) {
+        val resultFragment = supportFragmentManager.findFragmentByTag(tag) ?: fragment
+        val transaction = supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment, resultFragment, tag)
+
+        if (isAddToBackStack) {
+            transaction.addToBackStack(null)
         }
-    }
 
-    override fun onSupportNavigateUp() : Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
+        transaction.commit()
+        lastPushedFragment = resultFragment as BaseFragment<*>
     }
-
-    open protected fun buildAppBarConfiguration() : AppBarConfiguration = AppBarConfiguration(navController.graph)
 }

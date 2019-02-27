@@ -2,8 +2,8 @@ package com.powerincode.questionnaire_app.di.builders
 
 import com.powerincode.questionnaire_app.di.modules.LoginModule
 import com.powerincode.questionnaire_app.di.modules.MainModule
-import com.powerincode.questionnaire_app.screens.main.MainFragment
 import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
+import com.powerincode.questionnaire_app.screens.main.MainFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

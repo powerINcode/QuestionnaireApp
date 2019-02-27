@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_first_name_empty">First name must be not empty</string>
+    <string name="error_last_name_empty">First name must be not empty</string>
+    <string name="error_avatar_empty">Avatar must be not empty</string>
+</resources>

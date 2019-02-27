@@ -16,8 +16,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".screens.auth.AuthActivity"
-            android:noHistory="true">
+            android:name=".screens.auth.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
