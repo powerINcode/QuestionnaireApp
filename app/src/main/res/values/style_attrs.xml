@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorPrimaryLight" format="color"/>
+
+    <attr name="colorAccentDark" format="color"/>
+    <attr name="colorAccentLight" format="color"/>
+
+    <attr name="colorLogo" format="color"/>
+    <attr name="colorSeparator" format="color"/>
+    <attr name="colorGoogleBackground" format="color"/>
+</resources>
