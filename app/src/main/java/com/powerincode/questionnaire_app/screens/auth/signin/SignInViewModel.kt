@@ -4,14 +4,18 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.StringRes
 import android.util.Patterns
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
 import javax.inject.Inject
 
+
 /**
  * Created by powerman23rus on 27/02/2019.
  */
-class SignInViewModel @Inject constructor() : StateViewModel<SignInState, SignInNavigation>() {
+class SignInViewModel @Inject constructor(private val firebaseAuth : FirebaseAuth) : StateViewModel<SignInState, SignInNavigation>() {
     private var _email : MutableLiveData<String?> = MutableLiveData()
     var email : LiveData<String?> = _email
 
@@ -19,6 +23,8 @@ class SignInViewModel @Inject constructor() : StateViewModel<SignInState, SignIn
     var password : LiveData<String?> = _password
 
     private val errors : MutableList<SignInError> = mutableListOf()
+
+    init { }
 
     fun setUserEmail(email : String?) {
         if (_email.value != email) {
@@ -36,18 +42,30 @@ class SignInViewModel @Inject constructor() : StateViewModel<SignInState, SignIn
         val email = _email.value
         val password = _password.value
 
-        clearErros()
+        clearErrors()
 
-        val emailError = handleEmailValidation(email)?.let {
+        handleEmailValidation(email)?.let {
             addError(SignInError.EmailError(it))
         }
-        val passwordError = handlePasswordValidation(password)?.let {
+
+        handlePasswordValidation(password)?.let {
             addError(SignInError.PasswordError(it))
         }
 
-        if (emailError == null && passwordError == null) {
-            _state.value = SignInState.ClearErrors
-            _message.event = "Start sign in"
+        if (errors.isEmpty()) {
+            clearErrors()
+
+            firebaseAuth.signInWithEmailAndPassword(email!!, password!!).addOnCompleteListener { signInUser ->
+                if (signInUser.isSuccessful) {
+                    _message.event = "Success"
+                } else {
+                    when(signInUser.exception) {
+                        is FirebaseAuthInvalidUserException -> addError(SignInError.AuthError(R.string.error_signin_invalid_user))
+                        is FirebaseAuthInvalidCredentialsException -> addError(SignInError.AuthError(R.string.error_signin_invalid_password))
+                        else -> _message.event = signInUser.exception?.message
+                    }
+                }
+            }
         }
     }
 
@@ -68,7 +86,7 @@ class SignInViewModel @Inject constructor() : StateViewModel<SignInState, SignIn
         _state.value = SignInState.Error(errors)
     }
 
-    private fun clearErros() {
+    private fun clearErrors() {
         errors.clear()
         _state.value = SignInState.ClearErrors
     }
@@ -76,8 +94,8 @@ class SignInViewModel @Inject constructor() : StateViewModel<SignInState, SignIn
     @StringRes
     private fun handleEmailValidation(email : String?) : Int? {
         return when {
-            email.isNullOrEmpty() -> R.string.error_signin_email_empty
-            !Patterns.EMAIL_ADDRESS.toRegex().containsMatchIn(email) -> R.string.error_signin_email_incorrect
+            email.isNullOrEmpty() -> com.powerincode.questionnaire_app.R.string.error_signin_email_empty
+            !Patterns.EMAIL_ADDRESS.toRegex().containsMatchIn(email) -> com.powerincode.questionnaire_app.R.string.error_signin_email_incorrect
             else -> null
         }
     }
@@ -85,8 +103,8 @@ class SignInViewModel @Inject constructor() : StateViewModel<SignInState, SignIn
     @StringRes
     private fun handlePasswordValidation(password : String?) : Int? {
         return when {
-            password.isNullOrEmpty() -> R.string.error_signin_password_empty
-            password.length < 6 -> R.string.error_signin_password_incorrect
+            password.isNullOrEmpty() -> com.powerincode.questionnaire_app.R.string.error_signin_password_empty
+            password.length < 6 -> com.powerincode.questionnaire_app.R.string.error_signin_password_incorrect
             else -> null
         }
     }

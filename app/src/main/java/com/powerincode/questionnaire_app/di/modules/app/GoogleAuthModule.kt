@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -16,7 +17,13 @@ import javax.inject.Singleton
  */
 
 @Module
-class GoogleAuthClientModule {
+class GoogleAuthModule {
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAuth() : FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
 
     @Singleton
     @Provides

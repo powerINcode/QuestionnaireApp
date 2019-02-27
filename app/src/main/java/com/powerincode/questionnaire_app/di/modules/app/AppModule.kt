@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Module(
     includes = [
         NetworkModule::class,
-        GoogleAuthClientModule::class
+        GoogleAuthModule::class
     ]
 )
 object AppModule {

@@ -6,6 +6,7 @@ import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.afterTextChanged
 import com.powerincode.questionnaire_app.core.extensions.textIfDifferent
+import com.powerincode.questionnaire_app.core.extensions.toast
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
@@ -53,7 +54,7 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
             when(error){
                 is SignInError.EmailError -> tin_signin_email.error = getString(error.messageId)
                 is SignInError.PasswordError ->  tin_signin_password.error = getString(error.messageId)
-                is SignInError.AuthError -> {}
+                is SignInError.AuthError -> toast(error.messageId)
             }.exhaustive
         }
     }
