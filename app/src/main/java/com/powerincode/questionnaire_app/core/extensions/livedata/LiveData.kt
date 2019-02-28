@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.core.extensions
+package com.powerincode.questionnaire_app.core.extensions.livedata
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData

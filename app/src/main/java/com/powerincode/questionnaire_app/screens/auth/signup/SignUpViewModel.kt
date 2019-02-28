@@ -23,5 +23,7 @@ class SignUpViewModel {
 //                _message.event = "Failed"
 //            }
 //        }
+
+        // FirebaseAuthUserCollisionException: The email address is already in use by another account.
     }
 }

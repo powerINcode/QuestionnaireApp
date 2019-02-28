@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.core.extensions
+package com.powerincode.questionnaire_app.core.extensions.views
 
 import android.support.design.widget.TextInputEditText
 import android.widget.EditText

@@ -32,7 +32,7 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
             block()
         } catch (e : Exception) {
             if(e is CancellationException) throw e
-            _message.event = e.toString()
+            _message.event = e.message.toString()
         } finally {
             _loader.event = false
         }

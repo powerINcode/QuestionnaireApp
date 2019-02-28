@@ -10,11 +10,16 @@ import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.powerincode.questionnaire_app.core.extensions.observeEvent
-import com.powerincode.questionnaire_app.core.extensions.toast
+import android.widget.FrameLayout
+import android.widget.ProgressBar
+import com.powerincode.questionnaire_app.core.common.toDp
+import com.powerincode.questionnaire_app.core.extensions.livedata.observeEvent
+import com.powerincode.questionnaire_app.core.extensions.views.isVisible
+import com.powerincode.questionnaire_app.core.extensions.views.toast
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.observers.NotNullObserver
 import com.powerincode.questionnaire_app.screens._base.activity.BaseActivity
@@ -40,8 +45,28 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
     protected val root : BaseActivity?
         get() = activity as? BaseActivity
 
+    private var loadingCount : Int = 0
+    private var loadingView : View? = null
+
     override fun onCreateView(inflater : LayoutInflater, container : ViewGroup?, savedInstanceState : Bundle?) : View? {
+        loadingView = ProgressBar(context).apply {
+            layoutParams = FrameLayout.LayoutParams(36.toDp().toInt(), 36.toDp().toInt()).apply {
+                gravity = Gravity.CENTER
+            }
+
+            isVisible = false
+        }
+
+        container?.addView(loadingView)
         return inflater.inflate(getLayoutId(), container, false)
+    }
+
+    override fun onDestroyView() {
+        (view?.parent as? ViewGroup)?.removeView(loadingView)
+        loadingView = null
+        loadingCount = 0
+
+        super.onDestroyView()
     }
 
     override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
@@ -67,11 +92,33 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         vm.message.observeEvent {
             toast(it)
         }
+
+        vm.loader.observeEvent {
+            if (it) {
+                showLoader()
+            } else {
+                hideLoader()
+            }
+        }
     }
 
     protected fun setTitle(@StringRes resId : Int) = setTitle(getString(resId))
     protected fun setTitle(title : String) : Unit? {
         return root?.supportActionBar?.setTitle(title)
+    }
+
+    protected fun showLoader() {
+        loadingCount++
+        loadingView?.bringToFront()
+        loadingView?.isVisible = true
+    }
+
+    protected fun hideLoader() {
+        loadingCount--
+        if (loadingCount <= 0) {
+            loadingCount = 0
+            loadingView?.isVisible = false
+        }
     }
 
     protected fun notifyStartActivity(intent : Intent) = activity?.startActivity(intent)

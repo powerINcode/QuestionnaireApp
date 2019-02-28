@@ -4,10 +4,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.StringRes
 import android.util.Patterns
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.powerincode.questionnaire_app.R
+import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
 import javax.inject.Inject
 
@@ -15,7 +18,10 @@ import javax.inject.Inject
 /**
  * Created by powerman23rus on 27/02/2019.
  */
-class SignInViewModel @Inject constructor(private val firebaseAuth : FirebaseAuth) : StateViewModel<SignInState, SignInNavigation>() {
+class SignInViewModel @Inject constructor(
+    private val firebaseAuth : FirebaseAuth,
+    private val googleSignInClient : GoogleSignInClient
+) : StateViewModel<SignInState, SignInNavigation>() {
     private var _email : MutableLiveData<String?> = MutableLiveData()
     var email : LiveData<String?> = _email
 
@@ -24,7 +30,10 @@ class SignInViewModel @Inject constructor(private val firebaseAuth : FirebaseAut
 
     private val errors : MutableList<SignInError> = mutableListOf()
 
-    init { }
+    init {
+        val currentUser = firebaseAuth.currentUser
+//        googleSignInClient.las
+    }
 
     fun setUserEmail(email : String?) {
         if (_email.value != email) {
@@ -55,25 +64,34 @@ class SignInViewModel @Inject constructor(private val firebaseAuth : FirebaseAut
         if (errors.isEmpty()) {
             clearErrors()
 
-            firebaseAuth.signInWithEmailAndPassword(email!!, password!!).addOnCompleteListener { signInUser ->
-                if (signInUser.isSuccessful) {
-                    _message.event = "Success"
-                } else {
-                    when(signInUser.exception) {
-                        is FirebaseAuthInvalidUserException -> addError(SignInError.AuthError(R.string.error_signin_invalid_user))
-                        is FirebaseAuthInvalidCredentialsException -> addError(SignInError.AuthError(R.string.error_signin_invalid_password))
-                        else -> _message.event = signInUser.exception?.message
-                    }
+            request {
+                try {
+                    firebaseAuth.signInWithEmailAndPassword(email!!, password!!).await()
+                    _state.value = SignInState.SignInCompleteState
+                } catch (e : FirebaseAuthInvalidUserException) {
+                    addError(SignInError.AuthError(R.string.error_signin_invalid_user))
+                } catch (e : FirebaseAuthInvalidCredentialsException) {
+                    addError(SignInError.AuthError(R.string.error_signin_invalid_password))
                 }
             }
         }
     }
 
     fun onGoogleSignInClick() {
-
+        _state.value = SignInState.GoogleSignInState(googleSignInClient)
     }
 
     fun onSignUpClick() {
+
+    }
+
+    fun onGoogleSignInSuccess(account : GoogleSignInAccount) {
+        val email = account.email
+        googleSignInClient.signOut()
+        _state.value = SignInState.SignInCompleteState
+    }
+
+    fun onGoogleSignInFailed() {
 
     }
 
@@ -83,12 +101,12 @@ class SignInViewModel @Inject constructor(private val firebaseAuth : FirebaseAut
         }
 
         errors.add(error)
-        _state.value = SignInState.Error(errors)
+        _state.value = SignInState.ErrorState(errors)
     }
 
     private fun clearErrors() {
         errors.clear()
-        _state.value = SignInState.ClearErrors
+        _state.value = SignInState.ClearErrorsState
     }
 
     @StringRes
