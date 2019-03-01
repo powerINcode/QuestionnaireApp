@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ProgressBar
-import com.powerincode.questionnaire_app.core.common.toDp
+import com.powerincode.questionnaire_app.core.extensions.common.toDp
 import com.powerincode.questionnaire_app.core.extensions.livedata.observeEvent
 import com.powerincode.questionnaire_app.core.extensions.views.isVisible
 import com.powerincode.questionnaire_app.core.extensions.views.toast
@@ -26,12 +26,20 @@ import com.powerincode.questionnaire_app.screens._base.activity.BaseActivity
 import com.powerincode.questionnaire_app.screens._base.activity.BaseNavigationActivity
 import com.powerincode.questionnaire_app.screens._base.viewmodel.BaseViewModel
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by powerman23rus on 12/02/2019.
  */
-abstract class BaseFragment<T : BaseViewModel> : Fragment() {
+abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
+    private val job = Job()
+    override val coroutineContext : CoroutineContext = Dispatchers.Main + job
+
     @LayoutRes
     abstract fun getLayoutId() : Int
 
@@ -66,8 +74,11 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment() {
         loadingView = null
         loadingCount = 0
 
+        cancel()
         super.onDestroyView()
     }
+
+
 
     override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)

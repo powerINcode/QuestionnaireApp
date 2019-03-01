@@ -18,6 +18,9 @@
             @color/primaryDarkColor
         </item>
 
+        <item name="errorColor">@color/errorColor</item>
+        <item name="correctColor">@color/correctColor</item>
+
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:radioButtonStyle">@style/ButtonStyle.Radio</item>
         <item name="android:buttonStyle">@style/ButtonStyle</item>

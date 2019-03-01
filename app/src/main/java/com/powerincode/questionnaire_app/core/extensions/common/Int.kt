@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.core.common
+package com.powerincode.questionnaire_app.core.extensions.common
 
 import android.content.res.Resources
 

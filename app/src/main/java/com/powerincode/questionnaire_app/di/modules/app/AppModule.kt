@@ -16,6 +16,7 @@ import javax.inject.Singleton
 
 @Module(
     includes = [
+        ValidatorModule::class,
         NetworkModule::class,
         GoogleAuthModule::class
     ]

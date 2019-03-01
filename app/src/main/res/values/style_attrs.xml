@@ -5,6 +5,9 @@
     <attr name="colorAccentDark" format="color"/>
     <attr name="colorAccentLight" format="color"/>
 
+    <attr name="correctColor" format="color"/>
+    <attr name="errorColor" format="color"/>
+
     <attr name="rippleColor" format="color"/>
     <attr name="shadeColor" format="color"/>
 

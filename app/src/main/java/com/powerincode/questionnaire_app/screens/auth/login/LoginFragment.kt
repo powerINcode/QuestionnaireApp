@@ -14,7 +14,7 @@ import com.google.android.gms.auth.api.credentials.CredentialRequest
 import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.core.common.exhaustive
+import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.views.doOnLayout
 import com.powerincode.questionnaire_app.core.extensions.views.toast
 import com.powerincode.questionnaire_app.core.views.recyclerview.BaseRecyclerView

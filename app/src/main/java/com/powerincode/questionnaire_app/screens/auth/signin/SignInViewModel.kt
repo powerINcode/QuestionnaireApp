@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.powerincode.questionnaire_app.R
+import com.powerincode.questionnaire_app.core.extensions.common.replaceIfExist
 import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
 import javax.inject.Inject
@@ -29,11 +30,6 @@ class SignInViewModel @Inject constructor(
     var password : LiveData<String?> = _password
 
     private val errors : MutableList<SignInError> = mutableListOf()
-
-    init {
-        val currentUser = firebaseAuth.currentUser
-//        googleSignInClient.las
-    }
 
     fun setUserEmail(email : String?) {
         if (_email.value != email) {
@@ -81,10 +77,6 @@ class SignInViewModel @Inject constructor(
         _state.value = SignInState.GoogleSignInState(googleSignInClient)
     }
 
-    fun onSignUpClick() {
-
-    }
-
     fun onGoogleSignInSuccess(account : GoogleSignInAccount) {
         val email = account.email
         googleSignInClient.signOut()
@@ -96,11 +88,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun addError(error : SignInError) {
-        errors.firstOrNull { it.javaClass == error.javaClass }?.let {
-            errors.remove(it)
-        }
-
-        errors.add(error)
+        errors.replaceIfExist(error) { it.javaClass == error.javaClass }
         _state.value = SignInState.ErrorState(errors)
     }
 
@@ -112,8 +100,8 @@ class SignInViewModel @Inject constructor(
     @StringRes
     private fun handleEmailValidation(email : String?) : Int? {
         return when {
-            email.isNullOrEmpty() -> com.powerincode.questionnaire_app.R.string.error_signin_email_empty
-            !Patterns.EMAIL_ADDRESS.toRegex().containsMatchIn(email) -> com.powerincode.questionnaire_app.R.string.error_signin_email_incorrect
+            email.isNullOrEmpty() -> com.powerincode.questionnaire_app.R.string.error_all_email_empty
+            !Patterns.EMAIL_ADDRESS.toRegex().containsMatchIn(email) -> com.powerincode.questionnaire_app.R.string.error_all_email_format_incorrect
             else -> null
         }
     }
@@ -121,8 +109,8 @@ class SignInViewModel @Inject constructor(
     @StringRes
     private fun handlePasswordValidation(password : String?) : Int? {
         return when {
-            password.isNullOrEmpty() -> com.powerincode.questionnaire_app.R.string.error_signin_password_empty
-            password.length < 6 -> com.powerincode.questionnaire_app.R.string.error_signin_password_incorrect
+            password.isNullOrEmpty() -> com.powerincode.questionnaire_app.R.string.error_all_password_empty
+            password.length < 6 -> com.powerincode.questionnaire_app.R.string.error_all_password_incorrect
             else -> null
         }
     }

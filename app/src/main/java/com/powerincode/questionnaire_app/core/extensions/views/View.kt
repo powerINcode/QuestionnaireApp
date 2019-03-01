@@ -1,5 +1,6 @@
 package com.powerincode.questionnaire_app.core.extensions.views
 
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.view.View
 import android.view.ViewTreeObserver
 
@@ -20,4 +21,28 @@ inline fun View.doOnLayout(crossinline block : (view : View) -> Unit) {
             block(this@doOnLayout)
         }
     })
+}
+
+fun View.fadeIn(duration : Long = 1500, delay : Long = 0) {
+    alpha = 0f
+    isVisible = true
+    animate()
+        .alpha(1f)
+        .setStartDelay(delay)
+        .setDuration(duration)
+        .setInterpolator(FastOutSlowInInterpolator())
+        .start()
+
+}
+
+fun View.fadeOut(duration : Long = 1500, delay : Long = 0) {
+    alpha = 1f
+    isVisible = true
+    animate()
+        .alpha(0f)
+        .setStartDelay(delay)
+        .setDuration(duration)
+        .setInterpolator(FastOutSlowInInterpolator())
+        .start()
+
 }

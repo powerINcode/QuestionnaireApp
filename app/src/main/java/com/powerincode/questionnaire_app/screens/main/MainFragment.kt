@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.core.common.exhaustive
+import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
 import com.powerincode.questionnaire_app.screens.auth.AuthActivity
 import kotlinx.android.synthetic.main.fragment_main.*

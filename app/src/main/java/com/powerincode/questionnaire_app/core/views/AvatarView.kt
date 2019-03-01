@@ -12,7 +12,7 @@ import android.view.ViewOutlineProvider
 import android.widget.Checkable
 import android.widget.ImageView
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.core.common.toDp
+import com.powerincode.questionnaire_app.core.extensions.common.toDp
 
 /**
  * Created by powerman23rus on 25/02/2019.

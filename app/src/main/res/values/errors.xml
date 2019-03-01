@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="error_signin_email_empty">Email must be not empty</string>
-    <string name="error_signin_email_incorrect">Email is incorrect</string>
-    <string name="error_signin_password_empty">Password must be not empty</string>
-    <string name="error_signin_password_incorrect">Password must be contain at least 6 symbols</string>
-    <string name="error_signin_invalid_user">User with this email not exist</string>
+    <string name="error_all_email_empty">Email must be not empty</string>
+    <string name="error_all_email_format_incorrect">Incorrect email format</string>
+    <string name="error_all_name_empty">Name must be not empty</string>
+    <string name="error_all_password_empty">Password must be not empty</string>
+    <string name="error_all_password_incorrect">Password must be contain at least 6 symbols</string>
     <string name="error_signin_invalid_password">Password incorrect</string>
+    <string name="error_signin_password_not_equals">Passwords not equals</string>
+    <string name="error_signin_invalid_user">User with this email not exist</string>
+
 
     <string name="error_first_name_empty">First name must be not empty</string>
     <string name="error_last_name_empty">First name must be not empty</string>

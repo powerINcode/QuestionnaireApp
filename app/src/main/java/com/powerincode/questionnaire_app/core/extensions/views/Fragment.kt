@@ -8,5 +8,13 @@ import android.widget.Toast
  * Created by powerman23rus on 26/02/2019.
  */
 
-inline fun Fragment.toast(@StringRes resId : Int) = toast(getString(resId))
-inline fun Fragment.toast(message : String) =  Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+fun Fragment.getStringOrNull(@StringRes resId : Int?) : String? {
+    return if (resId != null) {
+        getString(resId)
+    } else {
+        null
+    }
+}
+
+fun Fragment.toast(@StringRes resId : Int) = toast(getString(resId))
+fun Fragment.toast(message : String) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()

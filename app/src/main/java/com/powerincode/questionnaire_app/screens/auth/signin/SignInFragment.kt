@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
-import com.powerincode.questionnaire_app.core.common.exhaustive
+import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.views.afterTextChanged
 import com.powerincode.questionnaire_app.core.extensions.views.textIfDifferent
 import com.powerincode.questionnaire_app.core.extensions.views.toast
@@ -50,10 +50,6 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
 
         vm.email.observeNullable { et_singin_email.textIfDifferent = it }
         vm.password.observeNullable { et_singin_password.textIfDifferent = it }
-    }
-
-    override fun observeNavigation(vm : SignInViewModel) {
-        super.observeNavigation(vm)
 
         vm.state.observe {
             when(it) {
@@ -68,6 +64,12 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
                 }
             }.exhaustive
         }
+    }
+
+    override fun observeNavigation(vm : SignInViewModel) {
+        super.observeNavigation(vm)
+
+
     }
 
 
@@ -97,5 +99,8 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
 
     companion object {
         const val RC_GOOGLE_SIGN_IN = 1000
+
+        @JvmStatic
+        fun getFragment() = SignInFragment()
     }
 }

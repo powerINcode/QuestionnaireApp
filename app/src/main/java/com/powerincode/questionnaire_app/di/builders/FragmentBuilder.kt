@@ -4,6 +4,7 @@ import com.powerincode.questionnaire_app.di.modules.AuthModule
 import com.powerincode.questionnaire_app.di.modules.MainModule
 import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
 import com.powerincode.questionnaire_app.screens.auth.signin.SignInFragment
+import com.powerincode.questionnaire_app.screens.auth.signup.SignUpFragment
 import com.powerincode.questionnaire_app.screens.main.MainFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -19,6 +20,9 @@ abstract class FragmentBuilder {
 
     @ContributesAndroidInjector(modules = [AuthModule::class])
     abstract fun buildSignInFragment() : SignInFragment
+
+    @ContributesAndroidInjector(modules = [AuthModule::class])
+    abstract fun buildSignUpFragment() : SignUpFragment
 
     @ContributesAndroidInjector(modules = [MainModule::class])
     abstract fun buildMainFragment() : MainFragment
