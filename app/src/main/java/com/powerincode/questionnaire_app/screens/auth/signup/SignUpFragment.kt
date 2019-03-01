@@ -63,47 +63,20 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
 
     }
 
-//    private fun handleErrors(errorsState : SignUpState.ErrorState) {
-//        for (error in errorsState.errors) {
-//            when (error) {
-//                is SignUpError.NameError -> handleNameError(error)
-//                is SignUpError.EmailError -> handleEmailError(error)
-//                is SignUpError.PasswordError -> handlePasswordError(error)
-//                is SignUpError.ConfirmPasswordError -> handleConfirmPasswordError(error)
-//            }.exhaustive
-//        }
-//    }
-
-    private fun handleNameError(error : SignUpError.NameError?) {
-        tin_sugnup_name.error = getStringOrNull(error?.messageId)
+    private fun handleNameError(messageId : Int?) {
+        tin_sugnup_name.error = getStringOrNull(messageId)
     }
 
-    private fun handleEmailError(error : SignUpError.EmailError?) {
-        tin_sugnup_email.error = getStringOrNull(error?.messageId)
+    private fun handleEmailError(messageId : Int?) {
+        tin_sugnup_email.error = getStringOrNull(messageId)
     }
 
-    private fun handlePasswordError(error : SignUpError.PasswordError?) {
-        tin_sugnup_password.error = getStringOrNull(error?.messageId)
+    private fun handlePasswordError(messageId : Int?) {
+        tin_sugnup_password.error = getStringOrNull(messageId)
     }
 
-    private fun handleConfirmPasswordError(error : SignUpError.PasswordError?) {
-        tin_sugnup_confirm_password.error = getStringOrNull(error?.messageId)
-    }
-
-    private fun handlePasswordEqualityError(error : SignUpError.PasswordEqualityError?) {
-        et_signup_password.setCompoundDrawablesWithIntrinsicBounds(0, 0, getPasswordEqualDrawable(error), 0)
-    }
-
-    private fun handleConfirmPasswordEqualityError(error : SignUpError.PasswordEqualityError?) {
-        et_signup_confirm_password.setCompoundDrawablesWithIntrinsicBounds(0, 0, getPasswordEqualDrawable(error), 0)
-    }
-
-    private fun getPasswordEqualDrawable(isEmpty : Any?) : Int {
-        return if (isEmpty == null) {
-            R.drawable.ic_check
-        } else {
-            R.drawable.ic_error
-        }
+    private fun handleConfirmPasswordError(messageId : Int?) {
+        tin_sugnup_confirm_password.error = getStringOrNull(messageId)
     }
 
     companion object {
