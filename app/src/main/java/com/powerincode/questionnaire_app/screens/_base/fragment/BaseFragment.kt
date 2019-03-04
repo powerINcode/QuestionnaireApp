@@ -100,6 +100,10 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
     protected open fun observeNavigation(vm : T) {}
 
     protected open fun onObserveViewModel(vm : T) {
+        vm.messageId.observeEvent {
+            toast(it)
+        }
+
         vm.message.observeEvent {
             toast(it)
         }

@@ -29,7 +29,7 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
         et_signup_email.afterTextChanged { viewModel.onEmailChange(it) }
         et_signup_password.afterTextChanged { viewModel.onPasswordChange(it) }
         et_signup_confirm_password.afterTextChanged { viewModel.onConfirmPasswordChange(it) }
-        btn_signup.setOnClickListener { viewModel.onSignUpClick() }
+        btn_login_signup.setOnClickListener { viewModel.onSignUpClick() }
     }
 
     private fun animateTitle() {

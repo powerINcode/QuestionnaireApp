@@ -5,6 +5,8 @@
     <string name="error_all_name_empty">Name must be not empty</string>
     <string name="error_all_password_empty">Password must be not empty</string>
     <string name="error_all_password_incorrect">Password must be contain at least 6 symbols</string>
+
+    <string name="error_signin_firebase_error">Sorry, but sign in not working</string>
     <string name="error_signin_email_already_use">Email already in use</string>
     <string name="error_signin_invalid_password">Password incorrect</string>
     <string name="error_signin_password_not_equals">Passwords not equals</string>

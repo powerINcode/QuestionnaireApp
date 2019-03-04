@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.views.afterTextChanged
+import com.powerincode.questionnaire_app.core.extensions.views.getStringOrNull
 import com.powerincode.questionnaire_app.core.extensions.views.textIfDifferent
 import com.powerincode.questionnaire_app.core.extensions.views.toast
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
@@ -29,7 +30,7 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
         et_singin_email.afterTextChanged { viewModel.setUserEmail(it) }
         et_singin_password.afterTextChanged { viewModel.setUserPassword(it) }
 
-        btn_signin.setOnClickListener { viewModel.onSignInClick() }
+        btn_login_signin.setOnClickListener { viewModel.onSignInClick() }
         btn_signin_connect_google.setOnClickListener { viewModel.onGoogleSignInClick() }
     }
 
@@ -49,16 +50,14 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
         super.onObserveViewModel(vm)
 
         vm.email.observeNullable { et_singin_email.textIfDifferent = it }
+        vm.errorEmail.observeNullable { tin_signin_email.error = getStringOrNull(it) }
+        vm.errorPassword.observeNullable { tin_signin_password.error = getStringOrNull(it) }
         vm.password.observeNullable { et_singin_password.textIfDifferent = it }
+
 
         vm.state.observe {
             when(it) {
                 is SignInState.GoogleSignInState -> handleGoogleSignIn(it)
-                is SignInState.ErrorState -> handleErrors(it)
-                is SignInState.ClearErrorsState -> {
-                    tin_signin_email.error = null
-                    tin_signin_password.error = null
-                }
                 SignInState.SignInCompleteState -> {
                     toast("Sign in in COMPLETE")
                 }
@@ -75,16 +74,6 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
 
     private fun handleGoogleSignIn(googleSignInState : SignInState.GoogleSignInState) {
         startActivityForResult(googleSignInState.client.signInIntent, RC_GOOGLE_SIGN_IN)
-    }
-
-    private fun handleErrors(errorState : SignInState.ErrorState) {
-        for (error in errorState.errors) {
-            when(error){
-                is SignInError.EmailError -> tin_signin_email.error = getString(error.messageId)
-                is SignInError.PasswordError ->  tin_signin_password.error = getString(error.messageId)
-                is SignInError.AuthError -> toast(error.messageId)
-            }.exhaustive
-        }
     }
 
     private fun handleGoogleSignInIntent(data : Intent?) {

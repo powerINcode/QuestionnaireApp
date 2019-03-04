@@ -14,6 +14,9 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
     override val coroutineContext : CoroutineContext = Dispatchers.Main + job
 
 
+    protected val _messageById : MutableLiveEvent<Int> = MutableLiveEvent()
+    val messageId : LiveEvent<Int> = _messageById
+
     protected val _message : MutableLiveEvent<String> = MutableLiveEvent()
     val message : LiveEvent<String> = _message
 

@@ -1,9 +1,7 @@
-package com.powerincode.questionnaire_app.di.modules
+package com.powerincode.questionnaire_app.di.modules.auth
 
 import android.arch.lifecycle.ViewModel
 import com.powerincode.questionnaire_app.di.keys.ViewModelKey
-import com.powerincode.questionnaire_app.domain.registration.RegistrationUseCase
-import com.powerincode.questionnaire_app.domain.registration.RegistrationUseCaseImpl
 import com.powerincode.questionnaire_app.screens.auth.login.LoginViewModel
 import com.powerincode.questionnaire_app.screens.auth.signin.SignInViewModel
 import com.powerincode.questionnaire_app.screens.auth.signup.SignUpViewModel
@@ -15,11 +13,12 @@ import dagger.multibindings.IntoMap
  * Created by powerman23rus on 25/02/2019.
  */
 
-@Module
+@Module(includes = [
+    CommonModule::class,
+    SignInModule::class,
+    SignUpModule::class
+])
 abstract class AuthModule {
-    @Binds
-    abstract fun provideRegistrationUseCase(useCase : RegistrationUseCaseImpl) : RegistrationUseCase
-
     @Binds
     @IntoMap
     @ViewModelKey(LoginViewModel::class)

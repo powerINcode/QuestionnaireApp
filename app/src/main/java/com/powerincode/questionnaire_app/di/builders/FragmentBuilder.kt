@@ -1,6 +1,6 @@
 package com.powerincode.questionnaire_app.di.builders
 
-import com.powerincode.questionnaire_app.di.modules.AuthModule
+import com.powerincode.questionnaire_app.di.modules.auth.AuthModule
 import com.powerincode.questionnaire_app.di.modules.MainModule
 import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
 import com.powerincode.questionnaire_app.screens.auth.signin.SignInFragment

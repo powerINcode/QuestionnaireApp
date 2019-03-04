@@ -98,11 +98,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="@string/signin_forgot_password"
-                app:layout_constraintBottom_toTopOf="@+id/btn_signin"
+                app:layout_constraintBottom_toTopOf="@+id/btn_login_signin"
                 app:layout_constraintEnd_toEndOf="@+id/tin_signin_password" />
 
             <Button
-                android:id="@+id/btn_signin"
+                android:id="@+id/btn_login_signin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -120,8 +120,8 @@
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@+id/btn_signin_connect_google"
-                app:layout_constraintEnd_toEndOf="@+id/btn_signin"
-                app:layout_constraintStart_toStartOf="@+id/btn_signin">
+                app:layout_constraintEnd_toEndOf="@+id/btn_login_signin"
+                app:layout_constraintStart_toStartOf="@+id/btn_login_signin">
 
                 <View
                     android:layout_width="0dp"

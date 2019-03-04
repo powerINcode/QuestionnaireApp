@@ -3,8 +3,8 @@ package com.powerincode.questionnaire_app.screens.auth.signup
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
-import com.powerincode.questionnaire_app.domain.registration.RegisterResult
-import com.powerincode.questionnaire_app.domain.registration.RegistrationUseCase
+import com.powerincode.questionnaire_app.domain.auth.signup.SignUpInteractor
+import com.powerincode.questionnaire_app.domain.auth.signup.SignUpResult
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ import javax.inject.Inject
  */
 
 class SignUpViewModel @Inject constructor(
-    private val registrationUseCase : RegistrationUseCase
+    private val signUpInteractor : SignUpInteractor
 ) : StateViewModel<SignUpState, SignUpNavigation>() {
 
     private val _name : MutableLiveData<String?> = MutableLiveData()
@@ -71,16 +71,16 @@ class SignUpViewModel @Inject constructor(
 
         request {
             when (val result =
-                registrationUseCase.register(_name.value, _email.value, _password.value, _confirmPassword.value)) {
-                is RegisterResult.NameError -> _errorName.value = result.firstMessageIdOrNull
-                is RegisterResult.EmailError -> _errorEmail.value = result.firstMessageIdOrNull
-                is RegisterResult.PasswordError -> _errorName.value = result.firstMessageIdOrNull
-                is RegisterResult.PasswordEqualityError -> {
+                signUpInteractor.register(_name.value, _email.value, _password.value, _confirmPassword.value)) {
+                is SignUpResult.NameError -> _errorName.value = result.firstMessageIdOrNull
+                is SignUpResult.EmailError -> _errorEmail.value = result.firstMessageIdOrNull
+                is SignUpResult.PasswordError -> _errorName.value = result.firstMessageIdOrNull
+                is SignUpResult.PasswordEqualityError -> {
                     _errorPassword.value = result.firstMessageIdOrNull
                     _errorConfirmPassword.value = result.firstMessageIdOrNull
                 }
-                RegisterResult.UserNotCreatedError -> _message.event = "User not created"
-                RegisterResult.Success -> _message.event = "Success"
+                SignUpResult.UserNotCreatedError -> _message.event = "User not created"
+                SignUpResult.Success -> _message.event = "Success"
             }.exhaustive
         }
     }
@@ -88,17 +88,17 @@ class SignUpViewModel @Inject constructor(
 
     //region Validation
     private fun handleNameError() {
-        _errorName.value = registrationUseCase.validateName(_name.value).firstOrNull()?.messageId
+        _errorName.value = signUpInteractor.validateName(_name.value).firstOrNull()?.messageId
     }
 
     private fun handleEmailError() {
-        _errorEmail.value = registrationUseCase.validateEmail(_email.value).firstOrNull()?.messageId
+        _errorEmail.value = signUpInteractor.validateEmail(_email.value).firstOrNull()?.messageId
     }
 
     private fun handlePasswordError() {
-        val validatePassword = registrationUseCase.validatePassword(_password.value).firstOrNull()?.messageId
+        val validatePassword = signUpInteractor.validatePassword(_password.value).firstOrNull()?.messageId
         val validatePasswordEquality =
-            registrationUseCase.validatePasswordEquality(_password.value, _confirmPassword.value).firstOrNull()
+            signUpInteractor.validatePasswordsEquality(_password.value, _confirmPassword.value).firstOrNull()
                 ?.messageId
 
         when {
@@ -108,9 +108,9 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun handleConfirmPasswordError() {
-        val validateConfirmPassword = registrationUseCase.validatePassword(_confirmPassword.value).firstOrNull()?.messageId
+        val validateConfirmPassword = signUpInteractor.validatePassword(_confirmPassword.value).firstOrNull()?.messageId
         val validatePasswordEquality =
-            registrationUseCase.validatePasswordEquality(_password.value, _confirmPassword.value).firstOrNull()
+            signUpInteractor.validatePasswordsEquality(_password.value, _confirmPassword.value).firstOrNull()
                 ?.messageId
 
         when {
