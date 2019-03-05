@@ -6,6 +6,17 @@ import com.powerincode.questionnaire_app.screens.auth.login.adapter.AvatarRecycl
 /**
  * Created by powerman23rus on 25/02/2019.
  */
+
+interface Person {
+    val name : String
+    val age : Int
+}
+
+data class PersonData(override val name : String, override val age : Int) : Person
+
+class Worker(data : PersonData, val exp : Int) : Person by data
+
+
 class LoginFragment_tmp : BaseFragment<LoginViewModel>() {
     override fun fragmentTag() : String = "LoginFragment"
     override fun getLayoutId() : Int = com.powerincode.questionnaire_app.R.layout.fragment_login_tmp

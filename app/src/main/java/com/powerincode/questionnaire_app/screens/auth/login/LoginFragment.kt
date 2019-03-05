@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
-import com.powerincode.questionnaire_app.screens.auth.signin.SignInFragment
-import com.powerincode.questionnaire_app.screens.auth.signup.SignUpFragment
+import com.powerincode.questionnaire_app.screens.auth.signin.view.SignInFragment
+import com.powerincode.questionnaire_app.screens.auth.signup.view.SignUpFragment
 import kotlinx.android.synthetic.main.fragment_login.*
 
 /**

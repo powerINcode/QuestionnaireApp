@@ -3,7 +3,6 @@ package com.powerincode.questionnaire_app.screens.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
@@ -29,19 +28,6 @@ class MainFragment : BaseFragment<MainViewModel>() {
         btn_log_out.setOnClickListener {
             viewModel.signOut()
         }
-    }
-
-    override fun onObserveViewModel(vm : MainViewModel) {
-        super.onObserveViewModel(vm)
-
-        viewModel.message.observeEvent {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
-
-        viewModel.loader.observeEvent {
-            pb_loading.visibility = if(it) View.VISIBLE else View.INVISIBLE
-        }
-
     }
 
     override fun observeNavigation(vm : MainViewModel) {

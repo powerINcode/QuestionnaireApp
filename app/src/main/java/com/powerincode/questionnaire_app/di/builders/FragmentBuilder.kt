@@ -1,10 +1,10 @@
 package com.powerincode.questionnaire_app.di.builders
 
-import com.powerincode.questionnaire_app.di.modules.auth.AuthModule
-import com.powerincode.questionnaire_app.di.modules.MainModule
+import com.powerincode.questionnaire_app.di.modules.screens.auth.AuthModule
+import com.powerincode.questionnaire_app.di.modules.screens.MainModule
 import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
-import com.powerincode.questionnaire_app.screens.auth.signin.SignInFragment
-import com.powerincode.questionnaire_app.screens.auth.signup.SignUpFragment
+import com.powerincode.questionnaire_app.screens.auth.signin.view.SignInFragment
+import com.powerincode.questionnaire_app.screens.auth.signup.view.SignUpFragment
 import com.powerincode.questionnaire_app.screens.main.MainFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
