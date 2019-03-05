@@ -1,6 +1,7 @@
 package com.powerincode.questionnaire_app.screens.auth.signup.interactor
 
 import com.powerincode.questionnaire_app.core.validators.errors.RuleError
+import com.powerincode.questionnaire_app.domain.uscases.auth.SignUpUseCase
 
 interface SignUpInteractor {
     fun validateName(name : String?) : List<RuleError>
@@ -14,5 +15,5 @@ interface SignUpInteractor {
         email : String?,
         password : String?,
         confirmPassword : String?
-    ) : SignUpResult
+    ) : SignUpUseCase.SignUpResult
 }

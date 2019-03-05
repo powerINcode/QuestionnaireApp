@@ -11,8 +11,8 @@ class LoginViewModel @Inject constructor(private val getProfileUseCase : GetProf
 
     init {
         request {
-            getProfileUseCase.execute().also {
-                _message.event = it?.toString() ?: "Is logged in: False"
+            getProfileUseCase.execute()?.let {
+               _navigation.event = LoginNavigation.NavigateToMain
             }
         }
     }

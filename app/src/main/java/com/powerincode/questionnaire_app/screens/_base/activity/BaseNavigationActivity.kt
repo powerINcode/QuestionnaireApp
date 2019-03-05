@@ -36,6 +36,25 @@ abstract class BaseNavigationActivity : BaseActivity() {
         )
     }
 
+    fun <T : BaseFragment<*>> upToAndPush(upTo : Class<T>, fragment : BaseFragment<*>, isInclusive : Boolean) {
+        for (i in supportFragmentManager.backStackEntryCount - 1 downTo 0) {
+            val backEntry = supportFragmentManager.getBackStackEntryAt(i)
+            val currentFragment = supportFragmentManager.findFragmentByTag(backEntry.name) as? BaseFragment<*> ?: continue
+
+            if (currentFragment::class.java == upTo) {
+                if (isInclusive) {
+                    supportFragmentManager.popBackStack()
+                }
+                break
+            }
+
+            supportFragmentManager.popBackStack()
+        }
+
+        pushFragment(fragment)
+
+    }
+
     fun addFragment(fragment : BaseFragment<*>) {
         setFragment(fragment, true, null)
     }
@@ -60,7 +79,7 @@ abstract class BaseNavigationActivity : BaseActivity() {
         transaction.replace(R.id.nav_host_fragment, resultFragment, tag)
 
         if (isAddToBackStack) {
-            transaction.addToBackStack(null)
+            transaction.addToBackStack(fragment.fragmentTag())
         }
 
         transaction.commit()

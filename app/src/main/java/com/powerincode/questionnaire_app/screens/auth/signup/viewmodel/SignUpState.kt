@@ -18,5 +18,5 @@ sealed class SignUpState {
 //}
 
 sealed class SignUpNavigation {
-
+    object NavigateToSignIn :  SignUpNavigation()
 }

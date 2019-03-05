@@ -10,16 +10,4 @@ import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
 class AuthActivity : BaseNavigationActivity() {
     override fun getLayoutId() : Int = R.layout.activity_auth
     override fun getInitialFragment() = LoginFragment.getFragment()
-
-//    override fun onBackPressed() {
-//        if (lastPushedFragment is LoginFragment) {
-//            val intent = Intent(Intent.ACTION_MAIN).apply {
-//                addCategory(Intent.CATEGORY_HOME)
-//                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//            }
-//            startActivity(intent)
-//        } else {
-//            super.onBackPressed()
-//        }
-//    }
 }

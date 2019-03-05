@@ -1,28 +1,33 @@
 package com.powerincode.questionnaire_app.screens.auth.login
 
+import android.os.Bundle
+import android.view.View
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
 import com.powerincode.questionnaire_app.screens.auth.login.adapter.AvatarRecyclerViewAdapter
+import com.powerincode.questionnaire_app.screens.auth.signin.view.SignInFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by powerman23rus on 25/02/2019.
  */
 
-interface Person {
-    val name : String
-    val age : Int
-}
-
-data class PersonData(override val name : String, override val age : Int) : Person
-
-class Worker(data : PersonData, val exp : Int) : Person by data
-
 
 class LoginFragment_tmp : BaseFragment<LoginViewModel>() {
-    override fun fragmentTag() : String = "LoginFragment"
+    override fun fragmentTag() : String = "LoginFragment_tmp"
     override fun getLayoutId() : Int = com.powerincode.questionnaire_app.R.layout.fragment_login_tmp
     override fun getViewModelClass() = LoginViewModel::class.java
 
     private val avatarAdapter = AvatarRecyclerViewAdapter()
+
+    override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        launch {
+            delay(1000)
+            notifyUpToAndPush(LoginFragment::class.java, SignInFragment.getFragment())
+        }
+    }
 
 //    override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)

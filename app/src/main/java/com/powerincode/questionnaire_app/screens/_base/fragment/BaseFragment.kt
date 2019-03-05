@@ -50,8 +50,11 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
     lateinit var factory : ViewModelProvider.Factory
     lateinit var viewModel : T
 
-    protected val root : BaseActivity?
+    protected val rootActivity : BaseActivity?
         get() = activity as? BaseActivity
+
+    protected val navigationActivity : BaseNavigationActivity?
+        get() = activity as? BaseNavigationActivity
 
     private var loadingCount : Int = 0
     private var loadingView : View? = null
@@ -77,7 +80,6 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
         cancel()
         super.onDestroyView()
     }
-
 
 
     override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
@@ -119,7 +121,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
 
     protected fun setTitle(@StringRes resId : Int) = setTitle(getString(resId))
     protected fun setTitle(title : String) : Unit? {
-        return root?.supportActionBar?.setTitle(title)
+        return rootActivity?.supportActionBar?.setTitle(title)
     }
 
     protected fun showLoader() {
@@ -149,6 +151,8 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
 
     protected fun notifyFinishActivity() = activity?.finish()
     protected fun notifyFinishAffinityActivity() = activity?.finishAffinity()
+    protected fun <T : BaseFragment<*>> notifyUpToAndPush(upTo : Class<T>, fragment : BaseFragment<*>, isInclusive : Boolean = false) =
+        navigationActivity?.upToAndPush(upTo, fragment, isInclusive)
 
     protected fun pushFragment(fragment : BaseFragment<*>) {
         (activity as? BaseNavigationActivity)?.pushFragment(fragment)

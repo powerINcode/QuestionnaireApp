@@ -3,11 +3,15 @@ package com.powerincode.questionnaire_app.screens.auth.signup.view
 import android.os.Bundle
 import android.view.View
 import com.powerincode.questionnaire_app.R
+import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.views.afterTextChanged
 import com.powerincode.questionnaire_app.core.extensions.views.fadeIn
 import com.powerincode.questionnaire_app.core.extensions.views.getStringOrNull
 import com.powerincode.questionnaire_app.core.extensions.views.textIfDifferent
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
+import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
+import com.powerincode.questionnaire_app.screens.auth.signin.view.SignInFragment
+import com.powerincode.questionnaire_app.screens.auth.signup.viewmodel.SignUpNavigation
 import com.powerincode.questionnaire_app.screens.auth.signup.viewmodel.SignUpViewModel
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import kotlinx.coroutines.delay
@@ -61,7 +65,13 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
 
     override fun observeNavigation(vm : SignUpViewModel) {
         super.observeNavigation(vm)
-
+        vm.navigation.observeEvent {
+            when(it) {
+                SignUpNavigation.NavigateToSignIn -> {
+                    notifyUpToAndPush(LoginFragment::class.java, SignInFragment.getFragment())
+                }
+            }.exhaustive
+        }
     }
 
     private fun handleNameError(messageId : Int?) {

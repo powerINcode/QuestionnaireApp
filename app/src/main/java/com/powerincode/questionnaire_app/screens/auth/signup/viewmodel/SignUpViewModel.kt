@@ -2,10 +2,12 @@ package com.powerincode.questionnaire_app.screens.auth.signup.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import com.powerincode.questionnaire_app.R
+import com.powerincode.questionnaire_app.core.extensions.common.errorIdOrNull
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
-import com.powerincode.questionnaire_app.screens.auth.signup.interactor.SignUpInteractor
-import com.powerincode.questionnaire_app.screens.auth.signup.interactor.SignUpResult
+import com.powerincode.questionnaire_app.domain.uscases.auth.SignUpUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
+import com.powerincode.questionnaire_app.screens.auth.signup.interactor.SignUpInteractor
 import javax.inject.Inject
 
 /**
@@ -72,15 +74,15 @@ class SignUpViewModel @Inject constructor(
         request {
             when (val result =
                 signUpInteractor.register(_name.value, _email.value, _password.value, _confirmPassword.value)) {
-                is SignUpResult.NameError -> _errorName.value = result.firstMessageIdOrNull
-                is SignUpResult.EmailError -> _errorEmail.value = result.firstMessageIdOrNull
-                is SignUpResult.PasswordError -> _errorName.value = result.firstMessageIdOrNull
-                is SignUpResult.PasswordEqualityError -> {
-                    _errorPassword.value = result.firstMessageIdOrNull
-                    _errorConfirmPassword.value = result.firstMessageIdOrNull
+                is SignUpUseCase.SignUpResult.NameError -> _errorName.value = result.errors.errorIdOrNull()
+                is SignUpUseCase.SignUpResult.EmailError -> _errorEmail.value = result.errors.errorIdOrNull()
+                is SignUpUseCase.SignUpResult.PasswordError -> _errorName.value = result.errors.errorIdOrNull()
+                is SignUpUseCase.SignUpResult.PasswordEqualityError -> {
+                    _errorPassword.value = result.errors.errorIdOrNull()
+                    _errorConfirmPassword.value = result.errors.errorIdOrNull()
                 }
-                SignUpResult.UserNotCreatedError -> _message.event = "User not created"
-                SignUpResult.Success -> _message.event = "Success"
+                SignUpUseCase.SignUpResult.UserNotCreatedError -> _messageById.event = R.string.error_signin_firebase_error
+                SignUpUseCase.SignUpResult.Success -> _navigation.event = SignUpNavigation.NavigateToSignIn
             }.exhaustive
         }
     }

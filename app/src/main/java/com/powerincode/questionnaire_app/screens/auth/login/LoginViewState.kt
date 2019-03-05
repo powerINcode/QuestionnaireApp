@@ -10,4 +10,5 @@ sealed class LoginViewState {
 sealed class LoginNavigation {
     object NavigateToSignIn : LoginNavigation()
     object NavigateToSignUp : LoginNavigation()
+    object NavigateToMain : LoginNavigation()
 }
