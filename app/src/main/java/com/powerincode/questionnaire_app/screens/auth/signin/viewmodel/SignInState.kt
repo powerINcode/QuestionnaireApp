@@ -1,5 +1,7 @@
 package com.powerincode.questionnaire_app.screens.auth.signin.viewmodel
 
+import com.google.android.gms.auth.api.credentials.CredentialsClient
+import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.powerincode.questionnaire_app.data.local.User
@@ -11,6 +13,7 @@ import com.powerincode.questionnaire_app.data.local.User
 sealed class SignInState {
     object ClearState : SignInState()
     class GoogleSignInState(val client : GoogleSignInClient) : SignInState()
+    class CredentialHints(val credentialClient : CredentialsClient, val  hintRequest : HintRequest) : SignInState()
     class CredentialChooseProfile(val resolveException : ResolvableApiException) : SignInState()
     class CredentialSavePromptState(val user : User, val resolveException : ResolvableApiException) : SignInState()
     object SignInCompleteState : SignInState()

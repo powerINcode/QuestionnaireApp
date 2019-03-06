@@ -13,16 +13,15 @@ import com.powerincode.questionnaire_app.core.extensions.views.afterTextChanged
 import com.powerincode.questionnaire_app.core.extensions.views.getStringOrNull
 import com.powerincode.questionnaire_app.core.extensions.views.textIfDifferent
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
+import com.powerincode.questionnaire_app.screens.auth.AuthActivity.Companion.RC_CREDENTIAL_HINT
 import com.powerincode.questionnaire_app.screens.auth.AuthActivity.Companion.RC_CREDENTIAL_SAVE_RESOLVE
 import com.powerincode.questionnaire_app.screens.auth.AuthActivity.Companion.RC_CREDENTIAL_SIGN_IN_RESOLVE
+import com.powerincode.questionnaire_app.screens.auth.AuthActivity.Companion.RC_GOOGLE_SIGN_IN
 import com.powerincode.questionnaire_app.screens.auth.signin.viewmodel.SignInNavigation
 import com.powerincode.questionnaire_app.screens.auth.signin.viewmodel.SignInState
 import com.powerincode.questionnaire_app.screens.auth.signin.viewmodel.SignInViewModel
 import com.powerincode.questionnaire_app.screens.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_sign_in.*
-
-
-
 
 /**
  * Created by powerman23rus on 27/02/2019.
@@ -47,6 +46,7 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
 
         when (requestCode) {
             RC_GOOGLE_SIGN_IN -> handleGoogleSignInIntent(resultCode, data)
+            RC_CREDENTIAL_HINT -> handleCredentialHintIntent(resultCode, data)
             RC_CREDENTIAL_SIGN_IN_RESOLVE -> handleCredentialShowProfileIntent(resultCode, data)
             RC_CREDENTIAL_SAVE_RESOLVE -> handleCredentialPromptIntent()
         }
@@ -65,6 +65,7 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
             when(it) {
                 is SignInState.ClearState -> {}
                 is SignInState.GoogleSignInState -> showGoogleSignIn(it)
+                is SignInState.CredentialHints -> showCredentialHints(it)
                 is SignInState.CredentialChooseProfile -> showCredentialChooseProfile(it)
                 is SignInState.CredentialSavePromptState -> showCredentialSavePrompt(it)
                 SignInState.SignInCompleteState -> { }
@@ -104,6 +105,22 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
         }
     }
 
+    private fun showCredentialHints(state : SignInState.CredentialHints) {
+        try {
+            val intent = state.credentialClient.getHintPickerIntent(state.hintRequest)
+            activity?.startIntentSenderForResult(intent.intentSender, RC_CREDENTIAL_HINT, null, 0, 0, 0)
+        } catch (e : IntentSender.SendIntentException) {
+            viewModel.onCredentialFailed()
+        }
+    }
+
+    private fun handleCredentialHintIntent(resultCode : Int, data : Intent?) {
+        if (resultCode == RESULT_OK && data != null) {
+            val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY)
+            viewModel.onCredentialHintSuccess(credential)
+        }
+    }
+
     private fun showCredentialChooseProfile(state : SignInState.CredentialChooseProfile) {
         try {
             state.resolveException.startResolutionForResult(activity, RC_CREDENTIAL_SIGN_IN_RESOLVE)
@@ -134,8 +151,6 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
     }
 
     companion object {
-        const val RC_GOOGLE_SIGN_IN = 1000
-
         @JvmStatic
         fun getFragment() = SignInFragment()
     }

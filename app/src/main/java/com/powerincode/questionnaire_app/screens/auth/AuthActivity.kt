@@ -14,7 +14,10 @@ class AuthActivity : BaseNavigationActivity() {
 
     override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?) {
         when (requestCode) {
-            RC_CREDENTIAL_SIGN_IN_RESOLVE, RC_CREDENTIAL_SAVE_RESOLVE -> lastPushedFragment?.onActivityResult(
+            RC_CREDENTIAL_HINT,
+            RC_CREDENTIAL_SIGN_IN_RESOLVE,
+            RC_CREDENTIAL_SAVE_RESOLVE
+            -> lastPushedFragment?.onActivityResult(
                 requestCode,
                 resultCode,
                 data
@@ -24,7 +27,9 @@ class AuthActivity : BaseNavigationActivity() {
     }
 
     companion object {
-        const val RC_CREDENTIAL_SIGN_IN_RESOLVE = 1001
-        const val RC_CREDENTIAL_SAVE_RESOLVE = 1002
+        const val RC_GOOGLE_SIGN_IN = 1000
+        const val RC_CREDENTIAL_HINT = 1001
+        const val RC_CREDENTIAL_SIGN_IN_RESOLVE = 1002
+        const val RC_CREDENTIAL_SAVE_RESOLVE = 1003
     }
 }

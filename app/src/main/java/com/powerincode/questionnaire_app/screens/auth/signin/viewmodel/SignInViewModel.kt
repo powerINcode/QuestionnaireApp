@@ -2,8 +2,7 @@ package com.powerincode.questionnaire_app.screens.auth.signin.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.google.android.gms.auth.api.credentials.Credential
-import com.google.android.gms.auth.api.credentials.IdentityProviders
+import com.google.android.gms.auth.api.credentials.*
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -25,6 +24,7 @@ import javax.inject.Inject
  */
 class SignInViewModel @Inject constructor(
     private val signInInteractor : SignInInteractor,
+    private val credentialsClient : CredentialsClient,
     private val googleSignInClient : GoogleSignInClient
 ) : StateViewModel<SignInState, SignInNavigation>() {
     private var _email : MutableLiveData<String?> = MutableLiveData()
@@ -66,6 +66,10 @@ class SignInViewModel @Inject constructor(
             _password.value = password
             handlePasswordError()
         }
+    }
+
+    fun onCredentialHintSuccess(credential : Credential) {
+        _email.value = credential.id
     }
 
     fun onSignInClick() {
@@ -168,6 +172,18 @@ class SignInViewModel @Inject constructor(
     private fun resolveCredentialResult(rae : ResolvableApiException) {
         if (rae.statusCode != CommonStatusCodes.SIGN_IN_REQUIRED) {
             _state.value = SignInState.CredentialChooseProfile(rae)
+        } else {
+            val hintRequest = HintRequest.Builder()
+                .setHintPickerConfig(
+                    CredentialPickerConfig.Builder()
+                        .setShowCancelButton(true)
+                        .build()
+                )
+                .setEmailAddressIdentifierSupported(true)
+                .setAccountTypes(IdentityProviders.GOOGLE)
+                .build()
+
+            _state.value = SignInState.CredentialHints(credentialsClient, hintRequest)
         }
     }
 
