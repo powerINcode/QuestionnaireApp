@@ -1,8 +1,7 @@
 package com.powerincode.questionnaire_app.di.modules.domain.uscases
 
 import com.powerincode.questionnaire_app.domain.uscases.UseCase
-import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase
-import com.powerincode.questionnaire_app.domain.uscases.auth.SignUpUseCase
+import com.powerincode.questionnaire_app.domain.uscases.auth.*
 import dagger.Binds
 import dagger.Module
 
@@ -12,8 +11,17 @@ import dagger.Module
 @Module
 abstract class AuthUseCaseModule {
     @Binds
-    abstract fun bindSignInUsecase(useCase : SignInUseCase) : UseCase
+    abstract fun bindSignInUseCase(useCase : SignInUseCase) : UseCase
 
     @Binds
-    abstract fun bindSignUpUsecase(useCase : SignUpUseCase) : UseCase
+    abstract fun bindSignUpUseCase(useCase : SignUpUseCase) : UseCase
+
+    @Binds
+    abstract fun bindGetCredentialUseCase(useCase : GetCredentialUseCase) : UseCase
+
+    @Binds
+    abstract fun bindSaveCredentialUseCase(useCase : SaveCredentialUseCase) : UseCase
+
+    @Binds
+    abstract fun bindResolveCredentialSignInUseCase(useCase : ResolveCredentialSignInUseCase) : UseCase
 }

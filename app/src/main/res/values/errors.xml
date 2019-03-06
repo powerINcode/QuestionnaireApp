@@ -12,6 +12,8 @@
 
     <!--region SignIn-->
 
+    <string name="error_signin_firebase_credential_error">Failed to send resolution</string>
+    <string name="error_signin_firebase_not_supported_account_type_error">Credential account type not supported</string>
     <string name="error_signin_firebase_error">Sorry, but sign in not working</string>
     <string name="error_signin_invalid_user">User with this email not exist</string>
     <string name="error_signin_email_already_use">Email already in use</string>

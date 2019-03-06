@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:importantForAutofill="noExcludeDescendants"
+    tools:ignore="UnusedAttribute">
 
     <!--TODO author: set attribution of autor of background-->
     <!--<a href="https://www.freepik.com/free-photos-vectors/people">People photo created by pressfoto - www.freepik.com</a>-->
@@ -21,9 +24,9 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="?shadeColor"/>-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="?shadeColor"/>-->
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -138,9 +141,9 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:text="@string/signin_connect_account_with"
-                    android:textSize="11sp"
                     android:textAllCaps="true"
-                    android:textColor="?colorSeparator" />
+                    android:textColor="?colorSeparator"
+                    android:textSize="11sp" />
 
                 <View
                     android:layout_width="0dp"

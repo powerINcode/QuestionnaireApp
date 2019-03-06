@@ -1,10 +1,11 @@
 package com.powerincode.questionnaire_app.screens.auth.signin.interactor
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.auth.FirebaseUser
+import com.google.android.gms.auth.api.credentials.Credential
 import com.powerincode.questionnaire_app.core.validators.errors.RuleError
+import com.powerincode.questionnaire_app.data.local.User
+import com.powerincode.questionnaire_app.domain.uscases.auth.ResolveCredentialSignInUseCase
+import com.powerincode.questionnaire_app.domain.uscases.auth.SaveCredentialUseCase
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase
-import com.powerincode.questionnaire_app.domain.uscases.profile.SaveProfileUseCase
 
 interface SignInInteractor {
     fun validateEmail(email : String?) : List<RuleError>
@@ -15,6 +16,9 @@ interface SignInInteractor {
         password : String?
     ) : SignInUseCase.SignInResult
 
-    fun saveProfile(account : GoogleSignInAccount) : SaveProfileUseCase.SaveProfileResult
-    fun saveProfile(account : FirebaseUser) : SaveProfileUseCase.SaveProfileResult
+    suspend fun getCredential() : Credential
+    suspend fun saveCredential(id : String, email : String, name : String?, password : String?, accountType : String?) : SaveCredentialUseCase.SaveCredentialsResult
+    suspend fun resolveSignInCredential(credential : Credential) : ResolveCredentialSignInUseCase.ResolveCredentialResult
+
+    fun saveProfile(user : User)
 }

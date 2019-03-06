@@ -1,11 +1,15 @@
 package com.powerincode.questionnaire_app.screens.main
 
 import android.util.Log
+import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.MutableLiveEvent
+import com.powerincode.questionnaire_app.domain.uscases.auth.GetCredentialUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.ClearProfileUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.GetProfileUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.BaseViewModel
@@ -22,6 +26,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val googleSignInClient : GoogleSignInClient,
                                         private val firebaseAuth : FirebaseAuth,
                                         private val getProfileUseCase : GetProfileUseCase,
+                                        private val credentialsClient : CredentialsClient,
+                                        private val getCredentialUseCase : GetCredentialUseCase,
                                         private var clearProfileUseCase : ClearProfileUseCase) : BaseViewModel() {
 
     private val _navigation : MutableLiveEvent<MainNavigation> = MutableLiveEvent()
@@ -39,14 +45,24 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
     fun signOut() {
         request {
             getProfileUseCase.execute()?.let {
+                val credential : Credential
+                try {
+                    credential = getCredentialUseCase.execute()
+                    credentialsClient.disableAutoSignIn()
+                    val a = 0
+//                    credentialsClient.delete(credential).await()
+                } catch (e : ResolvableApiException) {
+                    // credentials not saved
+                    val a = 0
+                }
+
                 if (it.isSignedViaEmail) {
                     firebaseAuth.signOut()
                 } else {
-                    googleSignInClient.signOut()
+                    googleSignInClient.signOut().await()
                 }
 
                 clearProfileUseCase.execute()
-                googleSignInClient.signOut().await()
 
                 _navigation.event = MainNavigation.NavigateToAuth
             }

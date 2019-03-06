@@ -2,21 +2,25 @@ package com.powerincode.questionnaire_app.screens.auth.signin.view
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.IntentSender
 import android.os.Bundle
 import android.view.View
+import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.views.afterTextChanged
 import com.powerincode.questionnaire_app.core.extensions.views.getStringOrNull
 import com.powerincode.questionnaire_app.core.extensions.views.textIfDifferent
-import com.powerincode.questionnaire_app.core.extensions.views.toast
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
+import com.powerincode.questionnaire_app.screens.auth.AuthActivity.Companion.RC_CREDENTIAL_SAVE_RESOLVE
+import com.powerincode.questionnaire_app.screens.auth.AuthActivity.Companion.RC_CREDENTIAL_SIGN_IN_RESOLVE
 import com.powerincode.questionnaire_app.screens.auth.signin.viewmodel.SignInNavigation
 import com.powerincode.questionnaire_app.screens.auth.signin.viewmodel.SignInState
 import com.powerincode.questionnaire_app.screens.auth.signin.viewmodel.SignInViewModel
 import com.powerincode.questionnaire_app.screens.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_sign_in.*
+
 
 
 
@@ -41,12 +45,10 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
     override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RC_GOOGLE_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                handleGoogleSignInIntent(data)
-            } else {
-                viewModel.onGoogleSignInFailed()
-            }
+        when (requestCode) {
+            RC_GOOGLE_SIGN_IN -> handleGoogleSignInIntent(resultCode, data)
+            RC_CREDENTIAL_SIGN_IN_RESOLVE -> handleCredentialShowProfileIntent(resultCode, data)
+            RC_CREDENTIAL_SAVE_RESOLVE -> handleCredentialPromptIntent()
         }
     }
 
@@ -61,10 +63,11 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
 
         vm.state.observe {
             when(it) {
-                is SignInState.GoogleSignInState -> handleGoogleSignIn(it)
-                SignInState.SignInCompleteState -> {
-                    toast("Sign in in COMPLETE")
-                }
+                is SignInState.ClearState -> {}
+                is SignInState.GoogleSignInState -> showGoogleSignIn(it)
+                is SignInState.CredentialChooseProfile -> showCredentialChooseProfile(it)
+                is SignInState.CredentialSavePromptState -> showCredentialSavePrompt(it)
+                SignInState.SignInCompleteState -> { }
             }.exhaustive
         }
     }
@@ -81,20 +84,53 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
     }
 
 
-    private fun handleGoogleSignIn(googleSignInState : SignInState.GoogleSignInState) {
+    private fun showGoogleSignIn(googleSignInState : SignInState.GoogleSignInState) {
         startActivityForResult(googleSignInState.client.signInIntent,
             RC_GOOGLE_SIGN_IN
         )
     }
 
-    private fun handleGoogleSignInIntent(data : Intent?) {
-        val accountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
-        val account = accountTask.getResult(ApiException::class.java)
-        if (account != null) {
-            viewModel.onGoogleSignInSuccess(account)
+    private fun handleGoogleSignInIntent(resultCode : Int, data : Intent?) {
+        if (resultCode == RESULT_OK) {
+            val accountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
+            val account = accountTask.getResult(ApiException::class.java)
+            if (account != null) {
+                viewModel.onGoogleSignInSuccess(account)
+            } else {
+                viewModel.onGoogleSignInFailed()
+            }
         } else {
             viewModel.onGoogleSignInFailed()
         }
+    }
+
+    private fun showCredentialChooseProfile(state : SignInState.CredentialChooseProfile) {
+        try {
+            state.resolveException.startResolutionForResult(activity, RC_CREDENTIAL_SIGN_IN_RESOLVE)
+        } catch (e : IntentSender.SendIntentException) {
+            viewModel.onCredentialFailed()
+        }
+    }
+
+    private fun handleCredentialShowProfileIntent(resultCode : Int, data : Intent?) {
+        if (resultCode == RESULT_OK && data != null) {
+            val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY)
+            viewModel.onCredentialChooseProfileSuccess(credential)
+        } else {
+            viewModel.onCredentialFailed()
+        }
+    }
+
+    private fun showCredentialSavePrompt(state : SignInState.CredentialSavePromptState) {
+        try {
+            state.resolveException.startResolutionForResult(activity, RC_CREDENTIAL_SAVE_RESOLVE)
+        } catch (e : IntentSender.SendIntentException) {
+            viewModel.onCredentialFailed()
+        }
+    }
+
+    private fun handleCredentialPromptIntent() {
+        viewModel.onCredentialSavePromptComplete()
     }
 
     companion object {

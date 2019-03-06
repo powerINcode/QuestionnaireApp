@@ -38,7 +38,7 @@ class SignInUseCase @Inject constructor(
                     listOf(RuleError(R.string.error_signin_firebase_error))
                 )
 
-            return SignInUseCase.SignInResult.Success(user)
+            return SignInUseCase.SignInResult.Success(user, password)
         } catch (e : FirebaseAuthInvalidUserException) {
             return SignInUseCase.SignInResult.UserNotSignInError(
                 listOf(RuleError(R.string.error_signin_invalid_user))
@@ -56,6 +56,6 @@ class SignInUseCase @Inject constructor(
         class EmailError(errors : List<RuleError>) : SignInResult(errors)
         class PasswordError(errors : List<RuleError>) : SignInResult(errors)
         class UserNotSignInError(errors : List<RuleError>) : SignInResult(errors)
-        class Success(val user : FirebaseUser) : SignInResult(emptyList())
+        class Success(val user : FirebaseUser, val password : String) : SignInResult(emptyList())
     }
 }
