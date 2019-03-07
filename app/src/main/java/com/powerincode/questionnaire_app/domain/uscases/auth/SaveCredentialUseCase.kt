@@ -17,7 +17,7 @@ import javax.inject.Inject
  */
 class SaveCredentialUseCase @Inject constructor(
     private val credentialsClient : CredentialsClient,
-    private val validatePasswordUseCase : ValidatePasswordUseCase
+    private val validatePassword : ValidatePasswordUseCase
 ) : UseCase {
     suspend fun execute(id : String, email : String, name : String?, password : String?, accountType : String?) : SaveCredentialsResult {
         val credentialBuilder = Credential.Builder(email)
@@ -26,7 +26,7 @@ class SaveCredentialUseCase @Inject constructor(
             credentialBuilder.setAccountType(accountType)
                 .setName(name)
         } else {
-            val passwordErrors = validatePasswordUseCase.execute(password)
+            val passwordErrors = validatePassword(password)
             if (passwordErrors.isEmpty()) {
                 credentialBuilder
                     .setAccountType(null)

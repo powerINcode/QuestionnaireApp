@@ -8,10 +8,10 @@ import javax.inject.Inject
 /**
  * Created by powerman23rus on 04/03/2019.
  */
-class ValidateNameUseCase @Inject constructor() : BaseValidationUseCase<String>() {
-    override fun execute(item : String?) : List<RuleError> {
+class ValidateNameUseCase @Inject constructor() : BaseValidationUseCase<String?>() {
+    override suspend fun run(param : String?) : List<RuleError> {
         return applyRules(
-            NotEmptyRule(item, R.string.error_validation_name_empty)
+            NotEmptyRule(param, R.string.error_validation_name_empty)
         )
     }
 }

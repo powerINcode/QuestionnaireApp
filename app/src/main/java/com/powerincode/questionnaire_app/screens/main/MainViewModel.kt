@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.MutableLiveEvent
+import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase.None
 import com.powerincode.questionnaire_app.domain.uscases.auth.GetCredentialUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.ClearProfileUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.GetProfileUseCase
@@ -44,10 +45,10 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
 
     fun signOut() {
         request {
-            getProfileUseCase.execute()?.let {
+            getProfileUseCase(None())?.let {
                 val credential : Credential
                 try {
-                    credential = getCredentialUseCase.execute()
+                    credential = getCredentialUseCase(None())
                     credentialsClient.disableAutoSignIn()
                     val a = 0
 //                    credentialsClient.delete(credential).await()
@@ -62,7 +63,7 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
                     googleSignInClient.signOut().await()
                 }
 
-                clearProfileUseCase.execute()
+                clearProfileUseCase(None())
 
                 _navigation.event = MainNavigation.NavigateToAuth
             }
@@ -72,7 +73,7 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
     init {
         request {
             delay(300)
-            getProfileUseCase.execute().apply {
+            getProfileUseCase(None()).apply {
                 _message.event = toString()
             }
         }

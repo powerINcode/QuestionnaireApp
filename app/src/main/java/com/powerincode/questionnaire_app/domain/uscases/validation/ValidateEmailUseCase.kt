@@ -9,11 +9,11 @@ import javax.inject.Inject
 /**
  * Created by powerman23rus on 04/03/2019.
  */
-class ValidateEmailUseCase @Inject constructor() : BaseValidationUseCase<String>() {
-    override fun execute(item : String?) : List<RuleError> {
+class ValidateEmailUseCase @Inject constructor() : BaseValidationUseCase<String?>() {
+    override suspend fun run(param : String?) : List<RuleError> {
         return applyRules(
-            NotEmptyRule(item, R.string.error_validation_email_empty),
-            MatchRegexRule(item, R.string.error_validation_email_format_incorrect)
+            NotEmptyRule(param, R.string.error_validation_email_empty),
+            MatchRegexRule(param, R.string.error_validation_email_format_incorrect)
         )
     }
 }

@@ -1,16 +1,16 @@
 package com.powerincode.questionnaire_app.domain.uscases.profile
 
 import com.powerincode.questionnaire_app.data.preference.PreferenceProvider
-import com.powerincode.questionnaire_app.domain.uscases.UseCase
+import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase
 import javax.inject.Inject
 
 /**
  * Created by powerman23rus on 05/03/2019.
  */
 class ClearProfileUseCase @Inject constructor(private val preferenceProvider : PreferenceProvider) :
-    UseCase {
+    BaseUseCase<BaseUseCase.None, BaseUseCase.None>() {
 
-    fun execute() {
+    override suspend fun run(param : None) : None = wrapNone {
         preferenceProvider.user = null
     }
 }

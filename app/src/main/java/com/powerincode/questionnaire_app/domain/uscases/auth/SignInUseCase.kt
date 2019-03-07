@@ -16,19 +16,19 @@ import javax.inject.Inject
  * Created by powerman23rus on 05/03/2019.
  */
 class SignInUseCase @Inject constructor(
-    private val validateEmailUseCase : ValidateEmailUseCase,
-    private val validatePasswordUseCase : ValidatePasswordUseCase,
+    private val validateEmail : ValidateEmailUseCase,
+    private val validatePassword : ValidatePasswordUseCase,
     private val firebaseAuth : FirebaseAuth
 ) : UseCase {
 
     suspend fun execute(email : String?, password : String?) : SignInResult {
         try {
-            val emailErrors = validateEmailUseCase.execute(email)
+            val emailErrors = validateEmail(email)
             if (emailErrors.isNotEmpty()) return SignInUseCase.SignInResult.EmailError(
                 emailErrors
             )
 
-            val passwordErrors = validatePasswordUseCase.execute(password)
+            val passwordErrors = validatePassword(password)
             if (passwordErrors.isNotEmpty()) return SignInUseCase.SignInResult.PasswordError(
                 passwordErrors
             )

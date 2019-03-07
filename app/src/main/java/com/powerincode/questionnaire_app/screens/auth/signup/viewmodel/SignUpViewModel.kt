@@ -110,14 +110,16 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun handleConfirmPasswordError() {
-        val validateConfirmPassword = signUpInteractor.validatePassword(_confirmPassword.value).firstOrNull()?.messageId
-        val validatePasswordEquality =
-            signUpInteractor.validatePasswordsEquality(_password.value, _confirmPassword.value).firstOrNull()
-                ?.messageId
+        request {
+            val validateConfirmPassword = signUpInteractor.validatePassword(_confirmPassword.value).firstOrNull()?.messageId
+            val validatePasswordEquality =
+                signUpInteractor.validatePasswordsEquality(_password.value, _confirmPassword.value).firstOrNull()
+                    ?.messageId
 
-        when {
-            validateConfirmPassword != null -> _errorConfirmPassword.value = validateConfirmPassword
-            else -> handlePasswordsEquality(validatePasswordEquality)
+            when {
+                validateConfirmPassword != null -> _errorConfirmPassword.value = validateConfirmPassword
+                else -> handlePasswordsEquality(validatePasswordEquality)
+            }
         }
     }
     private fun handlePasswordsEquality(error : Int?) {

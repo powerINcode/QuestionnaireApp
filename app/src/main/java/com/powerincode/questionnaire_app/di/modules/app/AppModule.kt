@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.powerincode.questionnaire_app.App
 import com.powerincode.questionnaire_app.data.preference.PreferenceProvider
-import com.powerincode.questionnaire_app.di.modules.domain.UseCasesModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -18,8 +17,7 @@ import javax.inject.Singleton
 @Module(
     includes = [
         NetworkModule::class,
-        GoogleAuthModule::class,
-        UseCasesModule::class
+        GoogleAuthModule::class
     ]
 )
 object AppModule {

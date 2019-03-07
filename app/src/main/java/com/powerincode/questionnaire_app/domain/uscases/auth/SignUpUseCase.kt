@@ -14,9 +14,9 @@ import javax.inject.Inject
  * Created by powerman23rus on 05/03/2019.
  */
 class SignUpUseCase @Inject constructor(
-    private val validateNameUseCase : ValidateNameUseCase,
-    private val validateEmailUseCase : ValidateEmailUseCase,
-    private val validatePasswordUseCase : ValidatePasswordUseCase,
+    private val validateName : ValidateNameUseCase,
+    private val validateEmail : ValidateEmailUseCase,
+    private val validatePassword : ValidatePasswordUseCase,
     private val firebaseAuth : FirebaseAuth
 ) : UseCase {
 
@@ -25,27 +25,27 @@ class SignUpUseCase @Inject constructor(
                         password : String?,
                         confirmPassword : String?) : SignUpResult {
         try {
-            val nameErrors = validateNameUseCase.execute(name)
+            val nameErrors = validateName(name)
             if (nameErrors.isNotEmpty()) return SignUpResult.NameError(
                 nameErrors
             )
 
-            val emailErrors = validateEmailUseCase.execute(email)
+            val emailErrors = validateEmail(email)
             if (emailErrors.isNotEmpty()) return SignUpResult.EmailError(
                 emailErrors
             )
 
-            val passwordErrors = validatePasswordUseCase.execute(password)
+            val passwordErrors = validatePassword(password)
             if (passwordErrors.isNotEmpty()) return SignUpResult.PasswordError(
                 passwordErrors
             )
 
-            val confirmPasswordErrors = validatePasswordUseCase.execute(confirmPassword)
+            val confirmPasswordErrors = validatePassword(confirmPassword)
             if (confirmPasswordErrors.isNotEmpty()) return SignUpResult.PasswordError(
                 confirmPasswordErrors
             )
 
-            val passwordsEquality = validatePasswordUseCase.validateEquality(password, confirmPassword)
+            val passwordsEquality = validatePassword.validateEquality(password, confirmPassword)
             if (passwordsEquality.isNotEmpty()) return SignUpResult.PasswordEqualityError(
                 nameErrors
             )

@@ -15,10 +15,10 @@ class SignUpInteractorImpl @Inject constructor(private val validateEmailUseCase 
                                                private val signUpUseCase : SignUpUseCase) :
     SignUpInteractor {
 
-    override fun validateName(name : String?) = validateNameUseCase.execute(name)
-    override fun validateEmail(email : String?) = validateEmailUseCase.execute(email)
-    override fun validatePassword(password : String?) = validatePasswordUseCase.execute(password)
-    override fun validateConfirmPassword(password : String?) = validatePasswordUseCase.execute(password)
+    override fun validateName(name : String?) = validateNameUseCase.block(name)
+    override fun validateEmail(email : String?) = validateEmailUseCase.block(email)
+    override fun validatePassword(password : String?) = validatePasswordUseCase.block(password)
+    override fun validateConfirmPassword(password : String?) = validatePasswordUseCase.block(password)
     override fun validatePasswordsEquality(password : String?, confirmPassword : String?) = validatePasswordUseCase.validateEquality(password, confirmPassword)
 
     override suspend fun register(
