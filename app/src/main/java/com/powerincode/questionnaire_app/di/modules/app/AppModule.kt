@@ -4,11 +4,11 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.powerincode.questionnaire_app.App
-import com.powerincode.questionnaire_app.data.preference.PreferenceProvider
+import com.powerincode.questionnaire_app.di.modules.app.data.DataModule
+import com.powerincode.questionnaire_app.di.modules.app.repository.RepositoryModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
-import javax.inject.Singleton
 
 /**
  * Created by powerman23rus on 12/02/2019.
@@ -16,7 +16,8 @@ import javax.inject.Singleton
 
 @Module(
     includes = [
-        NetworkModule::class,
+        DataModule::class,
+        RepositoryModule::class,
         GoogleAuthModule::class
     ]
 )
@@ -37,10 +38,5 @@ object AppModule {
                 return viewModelProvider.get() as T
             }
         }
-
-    @Singleton
-    @JvmStatic
-    @Provides
-    fun providePreference(context : Context) : PreferenceProvider = PreferenceProvider(context)
 
 }

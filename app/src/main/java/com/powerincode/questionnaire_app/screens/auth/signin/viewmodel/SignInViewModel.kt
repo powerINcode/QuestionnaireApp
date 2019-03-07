@@ -11,11 +11,17 @@ import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.common.errorIdOrNull
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.data.local.User
+import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase.None
+import com.powerincode.questionnaire_app.domain.uscases.auth.GetCredentialUseCase
 import com.powerincode.questionnaire_app.domain.uscases.auth.ResolveCredentialSignInUseCase
 import com.powerincode.questionnaire_app.domain.uscases.auth.SaveCredentialUseCase
+import com.powerincode.questionnaire_app.domain.uscases.auth.SaveCredentialUseCase.SaveCredentialParam
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase
+import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase.SignInParam
+import com.powerincode.questionnaire_app.domain.uscases.profile.SaveProfileUseCase
+import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase
+import com.powerincode.questionnaire_app.domain.uscases.validation.ValidatePasswordUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
-import com.powerincode.questionnaire_app.screens.auth.signin.interactor.SignInInteractor
 import javax.inject.Inject
 
 
@@ -23,7 +29,13 @@ import javax.inject.Inject
  * Created by powerman23rus on 27/02/2019.
  */
 class SignInViewModel @Inject constructor(
-    private val signInInteractor : SignInInteractor,
+    private val validateEmail : ValidateEmailUseCase,
+    private val validatePassword : ValidatePasswordUseCase,
+    private val getCredential : GetCredentialUseCase,
+    private val saveCredential : SaveCredentialUseCase,
+    private val resolveCredential : ResolveCredentialSignInUseCase,
+    private val signIn : SignInUseCase,
+    private val saveProfile : SaveProfileUseCase,
     private val credentialsClient : CredentialsClient,
     private val googleSignInClient : GoogleSignInClient
 ) : StateViewModel<SignInState, SignInNavigation>() {
@@ -46,8 +58,8 @@ class SignInViewModel @Inject constructor(
         _state.value = SignInState.ClearState
         request {
             try {
-                val credential = signInInteractor.getCredential()
-                handleResolveCredential(signInInteractor.resolveSignInCredential(credential))
+                val credential = getCredential(None())
+                handleResolveCredential(resolveCredential(credential))
             } catch (e : ResolvableApiException) {
                 resolveCredentialResult(e)
             }
@@ -77,7 +89,7 @@ class SignInViewModel @Inject constructor(
         handlePasswordError()
 
         request {
-            when (val result = signInInteractor.signIn(_email.value, _password.value)) {
+            when (val result = signIn(SignInParam(_email.value, _password.value))) {
                 is SignInUseCase.SignInResult.EmailError -> _errorEmail.value = result.errors.errorIdOrNull()
                 is SignInUseCase.SignInResult.PasswordError -> _errorPassword.value = result.errors.errorIdOrNull()
                 is SignInUseCase.SignInResult.UserNotSignInError -> _messageById.event = result.errors.errorIdOrNull()
@@ -86,12 +98,14 @@ class SignInViewModel @Inject constructor(
 
                     val user = result.user
                     handleCredentialSave(
-                        signInInteractor.saveCredential(
-                            user.uid,
-                            user.email!!,
-                            user.displayName,
-                            result.password,
-                            null
+                        saveCredential(
+                            SaveCredentialParam(
+                                user.uid,
+                                user.email!!,
+                                user.displayName,
+                                result.password,
+                                null
+                            )
                         )
                     )
                 }
@@ -112,12 +126,12 @@ class SignInViewModel @Inject constructor(
     fun onGoogleSignInSuccess(account : GoogleSignInAccount) {
         request {
             handleCredentialSave(
-                signInInteractor.saveCredential(
-                    account.id!!,
-                    account.email!!,
-                    account.displayName,
-                    null,
-                    IdentityProviders.GOOGLE
+                saveCredential(
+                    SaveCredentialParam(account.id!!,
+                        account.email!!,
+                        account.displayName,
+                        null,
+                        IdentityProviders.GOOGLE)
                 )
             )
         }
@@ -136,7 +150,7 @@ class SignInViewModel @Inject constructor(
      */
     fun onCredentialChooseProfileSuccess(credential : Credential) {
         request {
-            handleResolveCredential(signInInteractor.resolveSignInCredential(credential))
+            handleResolveCredential(resolveCredential(credential))
         }
     }
 
@@ -162,11 +176,11 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun handleEmailError() {
-        _errorEmail.value = signInInteractor.validateEmail(_email.value).errorIdOrNull()
+        _errorEmail.value = validateEmail.block(_email.value).errorIdOrNull()
     }
 
     private fun handlePasswordError() {
-        _errorPassword.value = signInInteractor.validatePassword(_password.value).errorIdOrNull()
+        _errorPassword.value = validatePassword.block(_password.value).errorIdOrNull()
     }
 
     private fun resolveCredentialResult(rae : ResolvableApiException) {
@@ -225,7 +239,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun saveUserAndNavigateToMain(user : User) {
-        signInInteractor.saveProfile(user)
+        saveProfile.block(user)
         _navigation.event = SignInNavigation.NavigateToMain
     }
 }

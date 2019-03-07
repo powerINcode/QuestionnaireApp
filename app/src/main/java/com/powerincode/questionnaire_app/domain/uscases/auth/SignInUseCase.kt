@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.core.validators.errors.RuleError
-import com.powerincode.questionnaire_app.domain.uscases.UseCase
+import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidatePasswordUseCase
 import javax.inject.Inject
@@ -19,9 +19,11 @@ class SignInUseCase @Inject constructor(
     private val validateEmail : ValidateEmailUseCase,
     private val validatePassword : ValidatePasswordUseCase,
     private val firebaseAuth : FirebaseAuth
-) : UseCase {
+) : BaseUseCase<SignInUseCase.SignInParam, SignInUseCase.SignInResult>() {
 
-    suspend fun execute(email : String?, password : String?) : SignInResult {
+    override suspend fun run(param : SignInParam) : SignInResult {
+        val email = param.email
+        val password = param.password
         try {
             val emailErrors = validateEmail(email)
             if (emailErrors.isNotEmpty()) return SignInUseCase.SignInResult.EmailError(
@@ -51,6 +53,8 @@ class SignInUseCase @Inject constructor(
             )
         }
     }
+
+    class SignInParam(val email : String?, val password : String?)
 
     sealed class SignInResult(val errors : List<RuleError>) {
         class EmailError(errors : List<RuleError>) : SignInResult(errors)

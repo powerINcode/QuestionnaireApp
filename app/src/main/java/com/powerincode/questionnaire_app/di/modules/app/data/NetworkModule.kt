@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.di.modules.app
+package com.powerincode.questionnaire_app.di.modules.app.data
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.powerincode.questionnaire_app.data.api.TempService.TempService
