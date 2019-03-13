@@ -145,8 +145,10 @@ class SignInViewModel @Inject constructor(
      */
     fun onCredentialChooseProfileSuccess(credential : Credential) {
         _state.value = SignInState.ClearState
+        _email.value = credential.id
+        _password.value = credential.password
+
         request {
-//            credentialsClient.delete(credential)
             handleResolveCredential(resolveCredential(credential))
         }
     }

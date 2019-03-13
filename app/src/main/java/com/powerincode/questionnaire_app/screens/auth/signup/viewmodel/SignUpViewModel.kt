@@ -2,12 +2,16 @@ package com.powerincode.questionnaire_app.screens.auth.signup.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import com.google.android.gms.auth.api.credentials.*
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.common.errorIdOrNull
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
+import com.powerincode.questionnaire_app.core.validators.rules.EqualityRule
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignUpUseCase
+import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase
+import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateNameUseCase
+import com.powerincode.questionnaire_app.domain.uscases.validation.ValidatePasswordUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
-import com.powerincode.questionnaire_app.screens.auth.signup.interactor.SignUpInteractor
 import javax.inject.Inject
 
 /**
@@ -15,7 +19,11 @@ import javax.inject.Inject
  */
 
 class SignUpViewModel @Inject constructor(
-    private val signUpInteractor : SignUpInteractor
+    private val validateEmail : ValidateEmailUseCase,
+    private val validateName : ValidateNameUseCase,
+    private val validatePassword : ValidatePasswordUseCase,
+    private val signUp : SignUpUseCase,
+    private val credentialsClient : CredentialsClient
 ) : StateViewModel<SignUpState, SignUpNavigation>() {
 
     private val _name : MutableLiveData<String?> = MutableLiveData()
@@ -44,6 +52,20 @@ class SignUpViewModel @Inject constructor(
     val errorConfirmPassword : LiveData<Int?> = _errorConfirmPassword
     //endregion
 
+    init {
+        val hintRequest = HintRequest.Builder()
+            .setHintPickerConfig(
+                CredentialPickerConfig.Builder()
+                    .setShowCancelButton(true)
+                    .build()
+            )
+            .setEmailAddressIdentifierSupported(true)
+            .setAccountTypes(IdentityProviders.GOOGLE)
+            .build()
+
+        _state.value = SignUpState.CredentialHints(credentialsClient, hintRequest)
+    }
+
     fun onNameChange(name : String?) {
         _name.value = name
         handleNameError()
@@ -64,6 +86,16 @@ class SignUpViewModel @Inject constructor(
         handleConfirmPasswordError()
     }
 
+    fun onCredentialHintSuccess(credential : Credential) {
+        _state.value = SignUpState.ClearState
+        _name.value = credential.name
+        _email.value = credential.id
+    }
+
+    fun onCredentialHintFailed() {
+        _state.value = SignUpState.ClearState
+    }
+
 
     fun onSignUpClick() {
         handleNameError()
@@ -72,8 +104,8 @@ class SignUpViewModel @Inject constructor(
         handleConfirmPasswordError()
 
         request {
-            when (val result =
-                signUpInteractor.register(_name.value, _email.value, _password.value, _confirmPassword.value)) {
+            val param = SignUpUseCase.SignUpParam(_name.value, _email.value, _password.value, _confirmPassword.value)
+            when (val result = signUp(param)) {
                 is SignUpUseCase.SignUpResult.NameError -> _errorName.value = result.errors.errorIdOrNull()
                 is SignUpUseCase.SignUpResult.EmailError -> _errorEmail.value = result.errors.errorIdOrNull()
                 is SignUpUseCase.SignUpResult.PasswordError -> _errorName.value = result.errors.errorIdOrNull()
@@ -81,7 +113,8 @@ class SignUpViewModel @Inject constructor(
                     _errorPassword.value = result.errors.errorIdOrNull()
                     _errorConfirmPassword.value = result.errors.errorIdOrNull()
                 }
-                SignUpUseCase.SignUpResult.UserNotCreatedError -> _messageById.event = R.string.error_signin_firebase_error
+                SignUpUseCase.SignUpResult.UserNotCreatedError -> _messageById.event =
+                    R.string.error_signin_firebase_error
                 SignUpUseCase.SignUpResult.Success -> _navigation.event = SignUpNavigation.NavigateToSignIn
             }.exhaustive
         }
@@ -90,17 +123,17 @@ class SignUpViewModel @Inject constructor(
 
     //region Validation
     private fun handleNameError() {
-        _errorName.value = signUpInteractor.validateName(_name.value).firstOrNull()?.messageId
+        _errorName.value = validateName.block(_name.value).firstOrNull()?.messageId
     }
 
     private fun handleEmailError() {
-        _errorEmail.value = signUpInteractor.validateEmail(_email.value).firstOrNull()?.messageId
+        _errorEmail.value = validateEmail.block(_email.value).firstOrNull()?.messageId
     }
 
     private fun handlePasswordError() {
-        val validatePassword = signUpInteractor.validatePassword(_password.value).firstOrNull()?.messageId
+        val validatePassword = validatePassword.block(_password.value).firstOrNull()?.messageId
         val validatePasswordEquality =
-            signUpInteractor.validatePasswordsEquality(_password.value, _confirmPassword.value).firstOrNull()
+            EqualityRule(_password.value, _confirmPassword.value, R.string.error_signup_password_not_equals).validate()
                 ?.messageId
 
         when {
@@ -110,18 +143,18 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun handleConfirmPasswordError() {
-        request {
-            val validateConfirmPassword = signUpInteractor.validatePassword(_confirmPassword.value).firstOrNull()?.messageId
-            val validatePasswordEquality =
-                signUpInteractor.validatePasswordsEquality(_password.value, _confirmPassword.value).firstOrNull()
-                    ?.messageId
+        val validateConfirmPassword =
+            validatePassword.block(_confirmPassword.value).firstOrNull()?.messageId
+        val validatePasswordEquality =
+            EqualityRule(_password.value, _confirmPassword.value, R.string.error_signup_password_not_equals).validate()
+                ?.messageId
 
-            when {
-                validateConfirmPassword != null -> _errorConfirmPassword.value = validateConfirmPassword
-                else -> handlePasswordsEquality(validatePasswordEquality)
-            }
+        when {
+            validateConfirmPassword != null -> _errorConfirmPassword.value = validateConfirmPassword
+            else -> handlePasswordsEquality(validatePasswordEquality)
         }
     }
+
     private fun handlePasswordsEquality(error : Int?) {
         _errorPassword.value = error
         _errorConfirmPassword.value = error

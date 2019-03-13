@@ -1,7 +1,11 @@
 package com.powerincode.questionnaire_app.screens.auth.signup.view
 
+import android.app.Activity
+import android.content.Intent
+import android.content.IntentSender
 import android.os.Bundle
 import android.view.View
+import com.google.android.gms.auth.api.credentials.Credential
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.core.extensions.views.afterTextChanged
@@ -9,9 +13,11 @@ import com.powerincode.questionnaire_app.core.extensions.views.fadeIn
 import com.powerincode.questionnaire_app.core.extensions.views.getStringOrNull
 import com.powerincode.questionnaire_app.core.extensions.views.textIfDifferent
 import com.powerincode.questionnaire_app.screens._base.fragment.BaseFragment
+import com.powerincode.questionnaire_app.screens.auth.AuthActivity
 import com.powerincode.questionnaire_app.screens.auth.login.LoginFragment
 import com.powerincode.questionnaire_app.screens.auth.signin.view.SignInFragment
 import com.powerincode.questionnaire_app.screens.auth.signup.viewmodel.SignUpNavigation
+import com.powerincode.questionnaire_app.screens.auth.signup.viewmodel.SignUpState
 import com.powerincode.questionnaire_app.screens.auth.signup.viewmodel.SignUpViewModel
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import kotlinx.coroutines.delay
@@ -25,6 +31,14 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
     override fun getViewModelClass() = SignUpViewModel::class.java
     override fun fragmentTag() = "SignUpFragment"
 
+    override fun onActivityResult(requestCode : Int, resultCode : Int, data : Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            AuthActivity.RC_CREDENTIAL_HINT -> handleCredentialHintIntent(resultCode, data)
+        }
+    }
+
     override fun onViewCreated(view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -35,15 +49,6 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
         et_signup_password.afterTextChanged { viewModel.onPasswordChange(it) }
         et_signup_confirm_password.afterTextChanged { viewModel.onConfirmPasswordChange(it) }
         btn_login_signup.setOnClickListener { viewModel.onSignUpClick() }
-    }
-
-    private fun animateTitle() {
-        launch {
-            delay(250)
-            tv_signup_create.fadeIn()
-            delay(150)
-            tv_signup_account.fadeIn()
-        }
     }
 
     override fun onObserveViewModel(vm : SignUpViewModel) {
@@ -59,6 +64,13 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
             errorEmail.observeNullable(::handleEmailError)
             errorPassword.observeNullable(::handlePasswordError)
             errorConfirmPassword.observeNullable(::handleConfirmPasswordError)
+
+            state.observe {
+                when(it) {
+                    SignUpState.ClearState -> {}
+                    is SignUpState.CredentialHints -> showCredentialHints(it)
+                }.exhaustive
+            }
         }
 
     }
@@ -71,6 +83,15 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
                     notifyUpToAndPush(LoginFragment::class.java, SignInFragment.getFragment())
                 }
             }.exhaustive
+        }
+    }
+
+    private fun animateTitle() {
+        launch {
+            delay(250)
+            tv_signup_create.fadeIn()
+            delay(150)
+            tv_signup_account.fadeIn()
         }
     }
 
@@ -88,6 +109,22 @@ class SignUpFragment : BaseFragment<SignUpViewModel>() {
 
     private fun handleConfirmPasswordError(messageId : Int?) {
         tin_sugnup_confirm_password.error = getStringOrNull(messageId)
+    }
+
+    private fun showCredentialHints(state : SignUpState.CredentialHints) {
+        try {
+            val intent = state.credentialClient.getHintPickerIntent(state.hintRequest)
+            activity?.startIntentSenderForResult(intent.intentSender, AuthActivity.RC_CREDENTIAL_HINT, null, 0, 0, 0)
+        } catch (e : IntentSender.SendIntentException) {
+            viewModel.onCredentialHintFailed()
+        }
+    }
+
+    private fun handleCredentialHintIntent(resultCode : Int, data : Intent?) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val credential = data.getParcelableExtra<Credential>(Credential.EXTRA_KEY)
+            viewModel.onCredentialHintSuccess(credential)
+        }
     }
 
     companion object {

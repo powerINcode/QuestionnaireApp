@@ -56,9 +56,9 @@ class SignInFragment : BaseFragment<SignInViewModel>() {
         super.onObserveViewModel(vm)
 
         vm.email.observeNullable { et_singin_email.textIfDifferent = it }
+        vm.password.observeNullable { et_singin_password.textIfDifferent = it }
         vm.errorEmail.observeNullable { tin_signin_email.error = getStringOrNull(it) }
         vm.errorPassword.observeNullable { tin_signin_password.error = getStringOrNull(it) }
-        vm.password.observeNullable { et_singin_password.textIfDifferent = it }
 
 
         vm.state.observe {

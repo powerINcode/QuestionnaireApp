@@ -48,7 +48,7 @@ class SignInUseCase @Inject constructor(
         } catch (e : FirebaseAuthInvalidCredentialsException) {
             return SignInUseCase.SignInResult.PasswordError(
                 listOf(
-                    RuleError(R.string.error_signin_invalid_password)
+                    RuleError(R.string.error_validation_password_incorrect)
                 )
             )
         }

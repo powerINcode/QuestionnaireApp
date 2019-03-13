@@ -4,7 +4,8 @@ import com.google.firebase.auth.*
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.core.validators.errors.RuleError
-import com.powerincode.questionnaire_app.domain.uscases.UseCase
+import com.powerincode.questionnaire_app.core.validators.rules.EqualityRule
+import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateNameUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidatePasswordUseCase
@@ -18,37 +19,40 @@ class SignUpUseCase @Inject constructor(
     private val validateEmail : ValidateEmailUseCase,
     private val validatePassword : ValidatePasswordUseCase,
     private val firebaseAuth : FirebaseAuth
-) : UseCase {
+) : BaseUseCase<SignUpUseCase.SignUpParam, SignUpUseCase.SignUpResult>() {
+    override suspend fun run(param : SignUpParam) : SignUpResult {
+        val name = param.name
+        val email = param.email
+        val password = param.password
+        val confirmPassword = param.confirmPassword
 
-    suspend fun execute(name : String?,
-                        email : String?,
-                        password : String?,
-                        confirmPassword : String?) : SignUpResult {
         try {
             val nameErrors = validateName(name)
-            if (nameErrors.isNotEmpty()) return SignUpResult.NameError(
-                nameErrors
-            )
+            if (nameErrors.isNotEmpty()) {
+                return SignUpResult.NameError(nameErrors)
+            }
 
             val emailErrors = validateEmail(email)
-            if (emailErrors.isNotEmpty()) return SignUpResult.EmailError(
-                emailErrors
-            )
+            if (emailErrors.isNotEmpty()) {
+                return SignUpResult.EmailError(emailErrors)
+            }
 
             val passwordErrors = validatePassword(password)
-            if (passwordErrors.isNotEmpty()) return SignUpResult.PasswordError(
-                passwordErrors
-            )
+            if (passwordErrors.isNotEmpty()) {
+                return SignUpResult.PasswordError(passwordErrors)
+            }
 
             val confirmPasswordErrors = validatePassword(confirmPassword)
-            if (confirmPasswordErrors.isNotEmpty()) return SignUpResult.PasswordError(
-                confirmPasswordErrors
-            )
+            if (confirmPasswordErrors.isNotEmpty()) {
+                return SignUpResult.PasswordError(confirmPasswordErrors)
+            }
 
-            val passwordsEquality = validatePassword.validateEquality(password, confirmPassword)
-            if (passwordsEquality.isNotEmpty()) return SignUpResult.PasswordEqualityError(
-                nameErrors
-            )
+            val passwordsEquality =
+                EqualityRule(password, confirmPassword, R.string.error_signup_password_not_equals).validate()
+                    ?.messageId
+            if (passwordsEquality != null) {
+                return SignUpResult.PasswordEqualityError(nameErrors)
+            }
 
             val user = firebaseAuth.createUserWithEmailAndPassword(email!!, password!!).await()?.user
                 ?: return SignUpResult.UserNotCreatedError
@@ -81,6 +85,13 @@ class SignUpUseCase @Inject constructor(
             )
         }
     }
+
+    class SignUpParam(
+        val name : String?,
+        val email : String?,
+        val password : String?,
+        val confirmPassword : String?
+    )
 
     sealed class SignUpResult(val errors : List<RuleError>) {
         class NameError(errors : List<RuleError>) : SignUpResult(errors)

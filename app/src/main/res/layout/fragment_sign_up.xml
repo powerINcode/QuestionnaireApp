@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:focusableInTouchMode="true">
+    android:importantForAutofill="noExcludeDescendants"
+    android:focusableInTouchMode="true"
+    tools:ignore="UnusedAttribute">
 
     <ScrollView
         android:layout_width="match_parent"

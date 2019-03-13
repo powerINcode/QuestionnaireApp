@@ -88,7 +88,7 @@ abstract class BaseFragment<T : BaseViewModel> : Fragment(), CoroutineScope {
         setHasOptionsMenu(true)
 
         activity?.let {
-            viewModel = ViewModelProviders.of(it, factory).get(getViewModelClass())
+            viewModel = ViewModelProviders.of(this, factory).get(getViewModelClass())
             observeNavigation(viewModel)
             onObserveViewModel(viewModel)
         }
