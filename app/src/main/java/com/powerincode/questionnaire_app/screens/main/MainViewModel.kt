@@ -9,10 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.powerincode.questionnaire_app.core.extensions.firebase.await
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.MutableLiveEvent
-import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase.None
-import com.powerincode.questionnaire_app.domain.uscases.auth.GetCredentialUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.ClearProfileUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.GetProfileUseCase
+import com.powerincode.questionnaire_app.domain.uscases.profile.credential.GetCredentialUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.BaseViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -45,10 +44,9 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
 
     fun signOut() {
         request {
-            getProfileUseCase(None())?.let {
+            getProfileUseCase()?.let {
                 val credential : Credential
                 try {
-                    credential = getCredentialUseCase(None())
                     credentialsClient.disableAutoSignIn()
                     val a = 0
 //                    credentialsClient.delete(credential).await()
@@ -63,7 +61,7 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
                     googleSignInClient.signOut().await()
                 }
 
-                clearProfileUseCase(None())
+                clearProfileUseCase()
 
                 _navigation.event = MainNavigation.NavigateToAuth
             }
@@ -73,7 +71,7 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
     init {
         request {
             delay(300)
-            getProfileUseCase(None()).apply {
+            getProfileUseCase().apply {
                 _message.event = toString()
             }
         }

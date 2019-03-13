@@ -5,20 +5,17 @@ import android.arch.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.credentials.*
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.common.api.ResolvableApiException
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.common.errorIdOrNull
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
 import com.powerincode.questionnaire_app.data.local.User
-import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase.None
-import com.powerincode.questionnaire_app.domain.uscases.auth.GetCredentialUseCase
-import com.powerincode.questionnaire_app.domain.uscases.auth.ResolveCredentialSignInUseCase
-import com.powerincode.questionnaire_app.domain.uscases.auth.SaveCredentialUseCase
-import com.powerincode.questionnaire_app.domain.uscases.auth.SaveCredentialUseCase.SaveCredentialParam
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase.SignInParam
 import com.powerincode.questionnaire_app.domain.uscases.profile.SaveProfileUseCase
+import com.powerincode.questionnaire_app.domain.uscases.profile.credential.GetCredentialUseCase
+import com.powerincode.questionnaire_app.domain.uscases.profile.credential.ResolveCredentialSignInUseCase
+import com.powerincode.questionnaire_app.domain.uscases.profile.credential.SaveCredentialUseCase
+import com.powerincode.questionnaire_app.domain.uscases.profile.credential.SaveCredentialUseCase.SaveCredentialParam
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidatePasswordUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
@@ -57,12 +54,7 @@ class SignInViewModel @Inject constructor(
     init {
         _state.value = SignInState.ClearState
         request {
-            try {
-                val credential = getCredential(None())
-                handleResolveCredential(resolveCredential(credential))
-            } catch (e : ResolvableApiException) {
-                resolveCredentialResult(e)
-            }
+            resolveCredential()
         }
     }
 
@@ -124,14 +116,17 @@ class SignInViewModel @Inject constructor(
      * On user click on Google sign in button
      */
     fun onGoogleSignInSuccess(account : GoogleSignInAccount) {
+        _state.value = SignInState.ClearState
         request {
             handleCredentialSave(
                 saveCredential(
-                    SaveCredentialParam(account.id!!,
+                    SaveCredentialParam(
+                        account.id!!,
                         account.email!!,
                         account.displayName,
                         null,
-                        IdentityProviders.GOOGLE)
+                        IdentityProviders.GOOGLE
+                    )
                 )
             )
         }
@@ -149,7 +144,9 @@ class SignInViewModel @Inject constructor(
      * When need to resolve account for credential
      */
     fun onCredentialChooseProfileSuccess(credential : Credential) {
+        _state.value = SignInState.ClearState
         request {
+//            credentialsClient.delete(credential)
             handleResolveCredential(resolveCredential(credential))
         }
     }
@@ -167,10 +164,11 @@ class SignInViewModel @Inject constructor(
     fun onCredentialSavePromptComplete() {
         when (val state = _state.value) {
             is SignInState.CredentialSavePromptState -> {
+                _state.value = SignInState.ClearState
                 saveUserAndNavigateToMain(state.user)
             }
             else -> {
-                throw IllegalStateException("Need CredentialSavePromptState, but have: $state")
+                throw IllegalStateException("Need ${SignInState.CredentialSavePromptState::class}, but have: $state")
             }
         }
     }
@@ -183,22 +181,28 @@ class SignInViewModel @Inject constructor(
         _errorPassword.value = validatePassword.block(_password.value).errorIdOrNull()
     }
 
-    private fun resolveCredentialResult(rae : ResolvableApiException) {
-        if (rae.statusCode != CommonStatusCodes.SIGN_IN_REQUIRED) {
-            _state.value = SignInState.CredentialChooseProfile(rae)
-        } else {
-            val hintRequest = HintRequest.Builder()
-                .setHintPickerConfig(
-                    CredentialPickerConfig.Builder()
-                        .setShowCancelButton(true)
-                        .build()
-                )
-                .setEmailAddressIdentifierSupported(true)
-                .setAccountTypes(IdentityProviders.GOOGLE)
-                .build()
+    private suspend fun resolveCredential() {
+        when (val result = getCredential()) {
+            is GetCredentialUseCase.CredentialAvailability.Available -> {
+                handleResolveCredential(resolveCredential(result.credential))
+            }
+            is GetCredentialUseCase.CredentialAvailability.NeedResolution -> {
+                _state.value = SignInState.CredentialChooseProfile(result.exception)
+            }
+            is GetCredentialUseCase.CredentialAvailability.Unavailable -> {
+                val hintRequest = HintRequest.Builder()
+                    .setHintPickerConfig(
+                        CredentialPickerConfig.Builder()
+                            .setShowCancelButton(true)
+                            .build()
+                    )
+                    .setEmailAddressIdentifierSupported(true)
+                    .setAccountTypes(IdentityProviders.GOOGLE)
+                    .build()
 
-            _state.value = SignInState.CredentialHints(credentialsClient, hintRequest)
-        }
+                _state.value = SignInState.CredentialHints(credentialsClient, hintRequest)
+            }
+        }.exhaustive
     }
 
     private fun handleCredentialSave(saveCredentialResult : SaveCredentialUseCase.SaveCredentialsResult) {

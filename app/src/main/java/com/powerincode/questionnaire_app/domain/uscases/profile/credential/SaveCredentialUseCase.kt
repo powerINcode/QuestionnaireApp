@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.domain.uscases.auth
+package com.powerincode.questionnaire_app.domain.uscases.profile.credential
 
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -25,25 +25,36 @@ class SaveCredentialUseCase @Inject constructor(
         val password = param.password
         val accountType = param.accountType
 
-        val passwordErrors = validatePassword(password)
-        if (passwordErrors.isNotEmpty()) {
-            return SaveCredentialsResult.PasswordError(passwordErrors)
+        if (accountType == null) {
+            val passwordErrors = validatePassword(password)
+            if (passwordErrors.isNotEmpty()) {
+                return SaveCredentialsResult.PasswordError(
+                    passwordErrors
+                )
+            }
         }
 
         val user = User(id, name ?: "", email, accountType == null)
         try {
             credentialRepository.saveCredential(id, email, name, password, accountType)
         } catch (e : ResolvableApiException) {
-            return SaveCredentialsResult.CredentialSavePromptError(user, e)
+            return SaveCredentialsResult.CredentialSavePromptError(
+                user,
+                e
+            )
         } catch (e : ApiException) {
             if (e.statusCode == Status.RESULT_CANCELED.statusCode) {
-                return SaveCredentialsResult.Canceled(user)
+                return SaveCredentialsResult.Canceled(
+                    user
+                )
             } else {
                 throw e
             }
         }
 
-        return SaveCredentialsResult.Success(user)
+        return SaveCredentialsResult.Success(
+            user
+        )
     }
 
     class SaveCredentialParam(

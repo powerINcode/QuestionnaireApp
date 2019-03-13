@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.domain.uscases.auth
+package com.powerincode.questionnaire_app.domain.uscases.profile.credential
 
 import android.content.Context
 import com.google.android.gms.auth.api.credentials.Credential
@@ -15,9 +15,13 @@ import javax.inject.Inject
  */
 class ResolveCredentialSignInUseCase @Inject constructor(private val context : Context) :
     BaseUseCase<Credential, ResolveCredentialSignInUseCase.ResolveCredentialResult>() {
+
     override suspend fun run(param : Credential) : ResolveCredentialResult {
         return when(param.accountType) {
-            null -> ResolveCredentialResult.ManualSignIn(param.id, param.password!!)
+            null -> ResolveCredentialResult.ManualSignIn(
+                param.id,
+                param.password!!
+            )
             IdentityProviders.GOOGLE -> {
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
@@ -25,11 +29,13 @@ class ResolveCredentialSignInUseCase @Inject constructor(private val context : C
                     .build()
                 val client = GoogleSignIn.getClient(context, gso)
 
-                val user = client.silentSignIn().await()
-                ResolveCredentialResult.GoogleSignIn(user!!)
+                val user = client.silentSignIn().await()!!
+                ResolveCredentialResult.GoogleSignIn(user)
             }
             else -> {
-                return ResolveCredentialResult.UnknownAccountType(param.accountType!!)
+                return ResolveCredentialResult.UnknownAccountType(
+                    param.accountType!!
+                )
             }
         }
     }

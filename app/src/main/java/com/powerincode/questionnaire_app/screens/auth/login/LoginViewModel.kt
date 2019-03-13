@@ -1,6 +1,5 @@
 package com.powerincode.questionnaire_app.screens.auth.login
 
-import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase.None
 import com.powerincode.questionnaire_app.domain.uscases.profile.GetProfileUseCase
 import com.powerincode.questionnaire_app.screens._base.viewmodel.StateViewModel
 import javax.inject.Inject
@@ -12,7 +11,7 @@ class LoginViewModel @Inject constructor(private val getProfile : GetProfileUseC
 
     init {
         request {
-            getProfile(None())?.let {
+            getProfile()?.let {
                _navigation.event = LoginNavigation.NavigateToMain
             }
         }
