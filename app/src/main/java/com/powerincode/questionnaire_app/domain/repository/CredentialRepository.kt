@@ -7,5 +7,5 @@ import com.google.android.gms.auth.api.credentials.Credential
  */
 interface CredentialRepository {
     suspend fun getCredential() : Credential
-    suspend fun saveCredential(id : String, email : String, name : String?, password : String?, accountType : String?)
+    suspend fun saveCredential(email : String, name : String?, password : String?, accountType : String?)
 }

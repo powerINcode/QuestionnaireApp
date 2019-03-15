@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#Firebase
+-keepattributes Signature
+#Firebase Authentication
+-keepattributes *Annotation*
+
+#Firebase Real Database
+-keepclassmembers class com.powerincode.questionnaire_app.data.realtimedatabase.models.** {
+  *;
+}

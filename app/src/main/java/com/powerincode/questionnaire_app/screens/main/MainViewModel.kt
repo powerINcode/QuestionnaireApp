@@ -6,9 +6,10 @@ import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.powerincode.questionnaire_app.core.extensions.firebase.await
+import com.powerincode.questionnaire_app.core.extensions.firebase.auth.await
 import com.powerincode.questionnaire_app.core.livedata.LiveEvent
 import com.powerincode.questionnaire_app.core.livedata.MutableLiveEvent
+import com.powerincode.questionnaire_app.domain.repository.RemoteUserRepository
 import com.powerincode.questionnaire_app.domain.uscases.profile.ClearProfileUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.GetProfileUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.credential.GetCredentialUseCase
@@ -28,6 +29,7 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
                                         private val getProfileUseCase : GetProfileUseCase,
                                         private val credentialsClient : CredentialsClient,
                                         private val getCredentialUseCase : GetCredentialUseCase,
+                                        private val remoteUserRepository : RemoteUserRepository,
                                         private var clearProfileUseCase : ClearProfileUseCase) : BaseViewModel() {
 
     private val _navigation : MutableLiveEvent<MainNavigation> = MutableLiveEvent()
@@ -71,7 +73,7 @@ class MainViewModel @Inject constructor(private val googleSignInClient : GoogleS
     init {
         request {
             delay(300)
-            getProfileUseCase().apply {
+            remoteUserRepository.getUser(getProfileUseCase()!!.id).apply {
                 _message.event = toString()
             }
         }

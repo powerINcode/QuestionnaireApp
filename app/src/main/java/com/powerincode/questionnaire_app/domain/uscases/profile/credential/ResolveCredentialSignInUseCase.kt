@@ -6,7 +6,8 @@ import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.powerincode.questionnaire_app.core.extensions.firebase.await
+import com.powerincode.questionnaire_app.R
+import com.powerincode.questionnaire_app.core.extensions.firebase.auth.await
 import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase
 import javax.inject.Inject
 
@@ -24,6 +25,7 @@ class ResolveCredentialSignInUseCase @Inject constructor(private val context : C
             )
             IdentityProviders.GOOGLE -> {
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(context.getString(R.string.web_api_key))
                     .requestEmail()
                     .setAccountName(param.id)
                     .build()

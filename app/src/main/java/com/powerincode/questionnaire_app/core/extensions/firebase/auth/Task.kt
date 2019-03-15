@@ -1,4 +1,4 @@
-package com.powerincode.questionnaire_app.core.extensions.firebase
+package com.powerincode.questionnaire_app.core.extensions.firebase.auth
 
 import com.google.android.gms.tasks.Task
 import kotlin.coroutines.resume

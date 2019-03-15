@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.core.extensions.firebase.await
+import com.powerincode.questionnaire_app.core.extensions.firebase.auth.await
 import com.powerincode.questionnaire_app.core.validators.errors.RuleError
 import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase

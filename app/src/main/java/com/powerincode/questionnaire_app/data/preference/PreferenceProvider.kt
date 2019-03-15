@@ -3,7 +3,7 @@ package com.powerincode.questionnaire_app.data.preference
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.powerincode.questionnaire_app.data.local.User
+import com.powerincode.questionnaire_app.data.realtimedatabase.models.user.UserModel
 import com.squareup.moshi.Moshi
 
 /**
@@ -13,7 +13,7 @@ class PreferenceProvider(context : Context) {
     private val preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val moshi = Moshi.Builder().build()
 
-    var user : User?
+    var user : UserModel?
         get () = fromJson(preferences.getString("user", null))
         set(value) = preferences.edit {
             putString("user", toJson(value))

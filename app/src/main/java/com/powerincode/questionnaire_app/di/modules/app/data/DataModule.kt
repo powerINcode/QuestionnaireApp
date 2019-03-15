@@ -7,6 +7,7 @@ import dagger.Module
  */
 @Module(includes = [
     LocalProvidersModule::class,
-    NetworkModule::class
+    NetworkModule::class,
+    RealTimeDatabaseModule::class
 ])
 class DataModule

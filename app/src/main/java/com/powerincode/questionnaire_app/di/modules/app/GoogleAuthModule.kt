@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.powerincode.questionnaire_app.R
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -39,8 +40,9 @@ class GoogleAuthModule {
 
     @Singleton
     @Provides
-    fun provideGoogleSignedOptions() : GoogleSignInOptions {
+    fun provideGoogleSignedOptions(context : Context) : GoogleSignInOptions {
         return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.web_api_key))
             .requestEmail()
             .build()
     }

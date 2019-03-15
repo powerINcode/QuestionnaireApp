@@ -34,6 +34,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
+            //https://developers.google.com/identity/sign-in/android/start
+            resValue "string", "web_api_key", "174646798744-i2m856l4p4m7khhc2r5rghv5quc7qcn9.apps.googleusercontent.com"
             signingConfig signingConfigs.debug
         }
     }
@@ -91,4 +93,7 @@ dependencies {
     // Firebase auth
     implementation "com.google.firebase:firebase-auth:$firbase_auth_version"
     implementation "com.google.android.gms:play-services-auth:$firbase_google_auth_version"
+
+    // Farebase database
+    implementation "com.google.firebase:firebase-database:$firbase_database_version"
 }

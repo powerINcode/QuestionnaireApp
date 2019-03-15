@@ -2,9 +2,11 @@ package com.powerincode.questionnaire_app.domain.uscases.auth
 
 import com.google.firebase.auth.*
 import com.powerincode.questionnaire_app.R
-import com.powerincode.questionnaire_app.core.extensions.firebase.await
+import com.powerincode.questionnaire_app.core.extensions.firebase.auth.await
 import com.powerincode.questionnaire_app.core.validators.errors.RuleError
 import com.powerincode.questionnaire_app.core.validators.rules.EqualityRule
+import com.powerincode.questionnaire_app.data.realtimedatabase.dao.users.models.SaveUserParams
+import com.powerincode.questionnaire_app.domain.repository.RemoteUserRepository
 import com.powerincode.questionnaire_app.domain.uscases.BaseUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateEmailUseCase
 import com.powerincode.questionnaire_app.domain.uscases.validation.ValidateNameUseCase
@@ -18,6 +20,7 @@ class SignUpUseCase @Inject constructor(
     private val validateName : ValidateNameUseCase,
     private val validateEmail : ValidateEmailUseCase,
     private val validatePassword : ValidatePasswordUseCase,
+    private val remoteUserRepository : RemoteUserRepository,
     private val firebaseAuth : FirebaseAuth
 ) : BaseUseCase<SignUpUseCase.SignUpParam, SignUpUseCase.SignUpResult>() {
     override suspend fun run(param : SignUpParam) : SignUpResult {
@@ -64,6 +67,8 @@ class SignUpUseCase @Inject constructor(
             user.updateProfile(updateUserRequest).await()
 
             user.sendEmailVerification().await()
+
+            remoteUserRepository.saveUser(SaveUserParams(user.uid, name, email, null, true))
             return SignUpResult.Success
         } catch (e : FirebaseAuthWeakPasswordException) {
             return SignUpResult.PasswordError(

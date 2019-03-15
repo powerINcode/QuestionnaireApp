@@ -8,10 +8,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.powerincode.questionnaire_app.R
 import com.powerincode.questionnaire_app.core.extensions.common.errorIdOrNull
 import com.powerincode.questionnaire_app.core.extensions.common.exhaustive
-import com.powerincode.questionnaire_app.data.local.User
+import com.powerincode.questionnaire_app.data.realtimedatabase.dao.users.models.SaveUserParams
+import com.powerincode.questionnaire_app.data.realtimedatabase.models.user.UserModel
+import com.powerincode.questionnaire_app.domain.uscases.auth.SignInGoogleUseCase
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase
 import com.powerincode.questionnaire_app.domain.uscases.auth.SignInUseCase.SignInParam
 import com.powerincode.questionnaire_app.domain.uscases.profile.SaveProfileUseCase
+import com.powerincode.questionnaire_app.domain.uscases.profile.SaveRemoteProfileUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.credential.GetCredentialUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.credential.ResolveCredentialSignInUseCase
 import com.powerincode.questionnaire_app.domain.uscases.profile.credential.SaveCredentialUseCase
@@ -30,8 +33,10 @@ class SignInViewModel @Inject constructor(
     private val validatePassword : ValidatePasswordUseCase,
     private val getCredential : GetCredentialUseCase,
     private val saveCredential : SaveCredentialUseCase,
+    private val saveRemoteProfileUseCase : SaveRemoteProfileUseCase,
     private val resolveCredential : ResolveCredentialSignInUseCase,
     private val signIn : SignInUseCase,
+    private val signInGoogle : SignInGoogleUseCase,
     private val saveProfile : SaveProfileUseCase,
     private val credentialsClient : CredentialsClient,
     private val googleSignInClient : GoogleSignInClient
@@ -96,6 +101,7 @@ class SignInViewModel @Inject constructor(
                                 user.email!!,
                                 user.displayName,
                                 result.password,
+                                null,
                                 null
                             )
                         )
@@ -118,13 +124,19 @@ class SignInViewModel @Inject constructor(
     fun onGoogleSignInSuccess(account : GoogleSignInAccount) {
         _state.value = SignInState.ClearState
         request {
+
+            signInGoogle(account)
+            val param =
+                SaveUserParams(account.id!!, account.displayName, account.email, account.photoUrl?.toString(), false)
+            saveRemoteProfileUseCase(param)
             handleCredentialSave(
                 saveCredential(
                     SaveCredentialParam(
-                        account.id!!,
-                        account.email!!,
-                        account.displayName,
+                        param.id,
+                        param.email!!,
+                        param.name + "Haha",
                         null,
+                        param.avatarUrl,
                         IdentityProviders.GOOGLE
                     )
                 )
@@ -247,7 +259,7 @@ class SignInViewModel @Inject constructor(
         }.exhaustive
     }
 
-    private fun saveUserAndNavigateToMain(user : User) {
+    private fun saveUserAndNavigateToMain(user : UserModel) {
         saveProfile.block(user)
         _navigation.event = SignInNavigation.NavigateToMain
     }
